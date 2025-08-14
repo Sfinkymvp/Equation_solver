@@ -22,7 +22,7 @@ typedef struct {
     double roots[MAX_ROOTS];
 } Equation;
 
-//  Проверка типы уравнения
+//  Главная функция работы с уравнением
 void equation_solution(Equation *);
 
 //  Решение линейного уравнения
