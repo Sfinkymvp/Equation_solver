@@ -100,10 +100,10 @@ void print_roots(Equation * eq)
 {
     if (eq->d > 0) {
         printf("Two roots:\n");
-        printf("%.3f %.3f\n", eq->x1, eq->x2);
+        printf("%.3lf %.3lf\n", eq->x1, eq->x2);
     } else if (eq->d == 0) {
         printf("One root:\n");
-        printf("%.3f\n", eq->x1);
+        printf("%.3lf\n", eq->x1);
     } else {
         printf("no roots\n");
     }
