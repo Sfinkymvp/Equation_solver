@@ -42,26 +42,41 @@ void solve_quadratic(Equation *);
 
 //  Ввод коэффициентов уравнения
 void enter_coefficients(Equation *);
-//  Вывод корней квадратного уравнения
+//  Вывод корней уравнения
 void print_roots(Equation *);
-
+//  Вывод корней уравнения в красивом виде
+void print_roots_cool(Equation *); 
 //  Сравнение числа с плавающей точкой с нулем
+
 int is_zero(double);
 //  Проверяет входной буффер на наличие символов, не являющихся пробельными
 int check_input_buffer();
 //  Очищает входной буффер
 void clear_input_buffer();
 
+//  Выводит приветствие с котиком
+void print_cat();
+//  Выводит сообщение о тождественно ложном уравнении
+void print_no_roots(Equation *);
+//  Выводит сообщение о наличии одного корня
+void print_one_root(Equation *);
+//  Выводит сообщение о наличии двух корней
+void print_two_roots(Equation *);
+//  Выводит сообщение о тождестве
+void print_infinite_roots();
+
 
 int main()
 {
     Equation data = {};
+    
+    print_cat();
 
     enter_coefficients(&data);
     
     solve_equation(&data);
 
-    print_roots(&data);
+    print_roots_cool(&data);
 
     return 0;
 }
@@ -168,6 +183,19 @@ void print_roots(Equation * eq)
 }
 
 
+void print_roots_cool(Equation * eq)
+{   
+    switch (eq->r_count) {
+        case NO_ROOTS: print_no_roots(eq); break;
+        case ONE_ROOT: print_one_root(eq); break;
+        case TWO_ROOTS: print_two_roots(eq); break;
+        case INFINITE_ROOTS: print_infinite_roots(); break;
+        default: break;
+    }
+
+}
+
+
 int is_zero(double number)
 {
     return fabs(number) <= EPS;
@@ -193,3 +221,51 @@ void clear_input_buffer()
     while ((c = getchar()) != '\n' && c != EOF)
         ;
 }
+
+
+void print_cat() 
+{
+    printf("   A_A                                              \n"
+           "  (-.-)             _   _        _ _          _     \n"
+           "   |-|             | | | |      | | |        | |    \n"
+           "  /   \\            | |_| | ___  | | |  ___   | |   \n"
+           " |     |  __       |  _  |/ _ \\ | | | / _ \\  |_|  \n"
+           " |  || | |  \\___   | | | |  __/ | | || (_) |  _    \n"
+           " \\_||_/_/          \\_| |_/\\___| |_|_| \\___/  |_|\n");
+
+}
+
+void print_no_roots(Equation * eq)
+{
+    if (is_zero(eq->a))
+        printf("%.2lf = 0 is not identical, no roots\n", eq->c);
+    else
+        printf("%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n",
+                eq->a, eq->b, eq->c); 
+}
+
+
+void print_one_root(Equation * eq)
+{
+    if (is_zero(eq->a))
+        printf("%.2lfx%+.2lf = 0 has one root:\n"
+               "x = %.3lf\n", eq->b, eq->c, eq->roots[0]);
+    else
+        printf("%.2lfx^2%+.2lfx%+.2lf = 0 has one root:\n"
+               "x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0]);
+}
+
+
+void print_two_roots(Equation * eq)
+{
+    printf("%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n"
+           "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);
+}
+
+
+void print_infinite_roots()
+{
+    printf("0 = 0 is an identity, infinite roots\n");
+}
+
+
