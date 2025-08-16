@@ -45,9 +45,9 @@ void enter_coefficients(Equation *);
 //  Вывод корней уравнения
 void print_roots(Equation *);
 //  Вывод корней уравнения в красивом виде
-void print_roots_cool(Equation *); 
-//  Сравнение числа с плавающей точкой с нулем
+void print_equation(Equation *);
 
+//  Сравнение числа с плавающей точкой с нулем
 int is_zero(double);
 //  Проверяет входной буффер на наличие символов, не являющихся пробельными
 int check_input_buffer();
@@ -55,7 +55,7 @@ int check_input_buffer();
 void clear_input_buffer();
 
 //  Выводит приветствие с котиком
-void print_cat();
+void print_hello();
 //  Выводит сообщение о тождественно ложном уравнении
 void print_no_roots(Equation *);
 //  Выводит сообщение о наличии одного корня
@@ -70,13 +70,13 @@ int main()
 {
     Equation data = {};
     
-    print_cat();
+    print_hello();
 
     enter_coefficients(&data);
     
     solve_equation(&data);
 
-    print_roots_cool(&data);
+    print_equation(&data);
 
     return 0;
 }
@@ -183,7 +183,7 @@ void print_roots(Equation * eq)
 }
 
 
-void print_roots_cool(Equation * eq)
+void print_equation(Equation * eq)
 {   
     switch (eq->r_count) {
         case NO_ROOTS: print_no_roots(eq); break;
@@ -223,7 +223,7 @@ void clear_input_buffer()
 }
 
 
-void print_cat() 
+void print_hello() 
 {
     printf("   A_A                                              \n"
            "  (-.-)             _   _        _ _          _     \n"
