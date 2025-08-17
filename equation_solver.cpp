@@ -8,7 +8,7 @@ const int MAX_ROOTS = 2;
 //  Допустимая погрешность для чисел с плавающей точкой
 const double EPS = 0.00000001;
 //  Допустимая длина имени файла
-const int MAX_NAME_LEN = 100;
+const int MAX_BUFFER_LEN = 100;
 
 //  Количество корней уравнения для структуры
 typedef enum {
@@ -55,15 +55,22 @@ void enter_coefficients(Equation *);
 //  Чтение коэффициентов уравнения из файла
 bool import_coefficients(Equation *);
 
+//  Выводит результат ответа пользователя (Да/Нет)
+bool check_agreement();
+//  Переносит решение уравнения в файл 
+void transfer_equation(Equation *);
+//  Производит запись решения уравнения в файл
+void export_equation(Equation *, char *, const char *);
+
 //  Вывод корней уравнения
 void print_equation(Equation *, FILE * out);
 
-//  Сравнение числа с плавающей точкой с нулем
+//  Сравнивание числа с плавающей точкой с нулем
 bool is_zero(double);
 //  Проверяет входной буффер на наличие символов, не являющихся пробельными
 bool check_input_buffer(FILE *);
 //  Проверяет доступность файла для чтения
-bool check_file_availability(char *);
+bool is_file_exists(char *);
 //  Очищает входной буффер
 void clear_input_buffer();
 //  Очищает терминал
@@ -109,7 +116,7 @@ void launch_solver()
 
         print_equation(&eq, stdout);
 
-
+        transfer_equation(&eq);
     }
  
     print_byebye(); 
@@ -208,10 +215,10 @@ bool get_coefficients(Equation * eq)
                 clear_screen();
                 if (import_coefficients(eq))
                     return true;
-                else 
-                    printf("Select the coefficient input mode again:\n"
-                           "(1 - Keyboard / 2 - File / 3 - Quit)\n");
-                    break;
+
+                printf("Select the coefficient input mode again:\n"
+                       "(1 - Keyboard / 2 - File / 3 - Quit)\n");
+                break;
             }
             case '3': return false; 
         }
@@ -251,28 +258,37 @@ void enter_coefficients(Equation * eq)
 }
 
 
+void enter_answer(char * answer)
+{
+    fgets(answer, MAX_BUFFER_LEN, stdin);
+    
+    int len = strlen(answer);
+//  Проверка длины имени файла
+    if (len > 0 && answer[len - 1] == '\n') {
+        answer[len - 1] = '\0';
+    } else {
+//  Очистка всего в случае неудачного чтения
+        answer[0] = '\0';
+        clear_input_buffer();
+    }
+}
+
+
 bool import_coefficients(Equation * eq)
 {
-    char file_name[MAX_NAME_LEN];
-    int len = 0;
-
     printf("Enter file name:\n");
+    
+    char file_name[MAX_BUFFER_LEN] = {};
 
-    fgets(file_name, MAX_NAME_LEN, stdin);
+    enter_answer(file_name);
 
-//  Проверка длины имени файла
-    len = strlen(file_name);
-    if (len > 0 && file_name[len - 1] == '\n') {
-        file_name[len - 1] = '\0';
-    } else {
-//  Очистка оставшихся в буфере ввода символов
-        clear_input_buffer();
+    if (file_name[0] == '\0') {
         printf("\nFile name too long\n");
         return false;
     }
 
 //  Проверка возможности доступа к файлу        
-    if (check_file_availability(file_name)) {
+    if (is_file_exists(file_name)) {
         FILE * in = fopen(file_name, "r"); 
 //  Проверка возможности чтения коэффициентов
         if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c) && check_input_buffer(in)) {
@@ -288,6 +304,70 @@ bool import_coefficients(Equation * eq)
     }
 
     return false; 
+}
+
+
+bool check_agreement()
+{
+    const char * agreements[] = {"yes", "y", "ok", "okay", "1",
+                                 "da", "true", "да", "окей", "ок"};
+    const int len_agreements = sizeof(agreements) / sizeof(*agreements);    
+
+    char answer[MAX_BUFFER_LEN] = {};
+    
+    enter_answer(answer);
+
+    if (answer[0] == '\0')
+        return false;
+
+    for (int index = 0; index < len_agreements; index++)
+        if (0 == strcasecmp(answer, agreements[index]))
+            return true;
+
+    return false;  
+}
+
+
+void transfer_equation(Equation * eq)
+{
+    printf("\nDo you want to write the solution to a file? (y/n)\n");
+
+    if (!check_agreement())
+        return;
+
+    printf("Enter file name:\n");
+
+    char file_name[MAX_BUFFER_LEN] = {};
+
+    enter_answer(file_name);
+
+    if (file_name[0] == '\0') {
+        printf("\nFile name too long\n");
+        return;
+    }
+
+    if (!is_file_exists(file_name)) {
+        export_equation(eq, file_name, "w");
+        printf("\nThe solution has been successfully written to the file.\n");
+    } else {
+        printf("\nA file with this name already exists,\n"
+               "do you want to overwrite it? (y/n)\n");
+
+        if (check_agreement()) {
+            export_equation(eq, file_name, "w");
+            printf("\nThe solution has been successfully written to the file.\n");
+        }
+    }  
+}
+
+
+void export_equation(Equation * eq, char * file_name, const char * mode)
+{
+    FILE * out = fopen(file_name, mode);
+
+    print_equation(eq, out);
+
+    fclose(out);
 }
 
 
@@ -322,7 +402,7 @@ bool check_input_buffer(FILE * in)
 }
 
 
-bool check_file_availability(char * file_name)
+bool is_file_exists(char * file_name)
 {
     FILE * in = fopen(file_name, "r");
     
@@ -404,7 +484,7 @@ void print_one_root(Equation * eq, FILE * out)
 
 void print_two_roots(Equation * eq, FILE * out)
 {
-    fprintf(out, "\n%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n\n"
+    fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n\n"
                  "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);
 }
 
