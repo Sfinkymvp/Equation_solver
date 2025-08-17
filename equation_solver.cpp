@@ -49,7 +49,7 @@ void solve_quadratic(Equation *);
 //  Выбор способа получения коэффициентов
 bool get_coefficients(Equation *);
 //  Ввод пунктов меню
-int select_input_mode();
+int enter_input_mode();
 //  Ввод коэффициентов уравнения
 void enter_coefficients(Equation *);
 //  Чтение коэффициентов уравнения из файла
@@ -107,15 +107,15 @@ void launch_solver()
     print_hello();
     
     while (true) {
-        bool status = get_coefficients(&eq);
-        
-        if (status == false)
+//  get_coefficients возвращает успешность записи коэффициентов
+//  При неудачной записи программа завершается        
+        if (!get_coefficients(&eq))
             break;
-        
+//  При удачной записи решается уравнение        
         solve_equation(&eq);
-
+//  Печать решения уравнения
         print_equation(&eq, stdout);
-
+//  По желанию пользователя решение записывается в файл
         transfer_equation(&eq);
     }
  
@@ -205,13 +205,16 @@ bool get_coefficients(Equation * eq)
            "3 - Quit\n\n");
 
     while (true) {
-        switch (select_input_mode()) {
+//  Пользователь вводит желаемый режим
+        switch (enter_input_mode()) {
             case '1': {
+//  Запись коэффициентов из стандартного ввода
                 clear_screen();
                 enter_coefficients(eq);
                 return true;
             }
             case '2': {
+//  Запись коэффициентов из пользовательского файла
                 clear_screen();
                 if (import_coefficients(eq))
                     return true;
@@ -226,7 +229,7 @@ bool get_coefficients(Equation * eq)
 }
 
 
-int select_input_mode()
+int enter_input_mode()
 {
     int answer = 0;
     
@@ -282,14 +285,16 @@ bool import_coefficients(Equation * eq)
 
     enter_answer(file_name);
 
+//  Если не удалось корректно записать имя файла функция завершает работу
     if (file_name[0] == '\0') {
-        printf("\nFile name too long\n");
+        printf("\nThe file name is empty or too long\n");
         return false;
     }
 
 //  Проверка возможности доступа к файлу        
     if (is_file_exists(file_name)) {
         FILE * in = fopen(file_name, "r"); 
+
 //  Проверка возможности чтения коэффициентов
         if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c) && check_input_buffer(in)) {
             printf("\nImport successful\n");
@@ -309,10 +314,10 @@ bool import_coefficients(Equation * eq)
 
 bool check_agreement()
 {
+//  Возможные ответы пользователя, которые принимаются, как согласие
     const char * agreements[] = {"yes", "y", "ok", "okay", "1",
                                  "da", "true", "да", "окей", "ок"};
     const int len_agreements = sizeof(agreements) / sizeof(*agreements);    
-
     char answer[MAX_BUFFER_LEN] = {};
     
     enter_answer(answer);
@@ -338,18 +343,19 @@ void transfer_equation(Equation * eq)
     printf("Enter file name:\n");
 
     char file_name[MAX_BUFFER_LEN] = {};
-
     enter_answer(file_name);
 
+//  Если не удалось корректно записать имя файла функция завершает работу
     if (file_name[0] == '\0') {
-        printf("\nFile name too long\n");
+        printf("\nThe file name is empty or too long\n");
         return;
     }
-
+//  Если файла не существует, он создается и записывается
     if (!is_file_exists(file_name)) {
         export_equation(eq, file_name, "w");
         printf("\nThe solution has been successfully written to the file.\n");
     } else {
+//  Если файл существует, пользователь должен дать согласие на его перезапись
         printf("\nA file with this name already exists,\n"
                "do you want to overwrite it? (y/n)\n");
 
