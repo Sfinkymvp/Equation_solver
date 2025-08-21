@@ -29,7 +29,7 @@ typedef struct {
 } Equation;
 
 //  Тело программы
-void launch_solver();
+void launch_solver(Equation *);
 //  Главная функция работы с уравнением
 void solve_equation(Equation *);
 
@@ -47,18 +47,19 @@ double find_discriminant(Equation *);
 void solve_quadratic(Equation *);
 
 //  Выбор способа получения коэффициентов
-bool get_coefficients(Equation *);
+bool get_coefficients(Equation *, int);
 //  Ввод пунктов меню
 int enter_input_mode();
+
 //  Ввод коэффициентов уравнения
 void enter_coefficients(Equation *);
 //  Чтение коэффициентов уравнения из файла
-bool import_coefficients(Equation *);
+bool load_coefficients_from_file(Equation *);
 
 //  Выводит результат ответа пользователя (Да/Нет)
 bool check_agreement();
 //  Переносит решение уравнения в файл 
-void transfer_equation(Equation *);
+void print_into_file(Equation *);
 //  Производит запись решения уравнения в файл
 void export_equation(Equation *, char *, const char *);
 
@@ -70,7 +71,7 @@ bool is_zero(double);
 //  Проверяет входной буффер на наличие символов, не являющихся пробельными
 bool check_input_buffer(FILE *);
 //  Проверяет доступность файла для чтения
-bool is_file_exists(char *);
+bool is_file_available(char *);
 //  Очищает входной буффер
 void clear_input_buffer();
 //  Очищает терминал
@@ -93,30 +94,41 @@ void print_infinite_roots(FILE *);
 
 int main()
 {
-    launch_solver();
+    Equation data = {};
+
+    launch_solver(&data);
 
     return 0;
 }
 
 
-void launch_solver()
+void launch_solver(Equation * eq)
 {
-    Equation eq = {};
-
     clear_screen();
     print_hello();
-    
+   
     while (true) {
-//  get_coefficients возвращает успешность записи коэффициентов
-//  При неудачной записи программа завершается        
-        if (!get_coefficients(&eq))
+        printf("Select the coefficient input mode:\n"
+               "1 - Keyboard input\n"
+               "2 - Reading from file\n"
+               "3 - Quit\n\n");
+
+        int input_mode = enter_input_mode();
+
+        if (input_mode == '3')
             break;
-//  При удачной записи решается уравнение        
-        solve_equation(&eq);
-//  Печать решения уравнения
-        print_equation(&eq, stdout);
-//  По желанию пользователя решение записывается в файл
-        transfer_equation(&eq);
+
+        if (!get_coefficients(eq, input_mode))
+            continue;
+
+        solve_equation(eq);
+
+        print_equation(eq, stdout);
+       
+        printf("\nDo you want to write the solution to a file? (y/n)\n");
+
+        if (check_agreement())
+            print_into_file(eq);
     }
  
     print_byebye(); 
@@ -197,49 +209,29 @@ void solve_quadratic(Equation * eq)
 }
 
 
-bool get_coefficients(Equation * eq)
+bool get_coefficients(Equation * eq, int input_mode)
 {
-    printf("\nSelect the coefficient input mode:\n"
-           "1 - Keyboard input\n"
-           "2 - Reading from file\n"
-           "3 - Quit\n\n");
-
-    while (true) {
-//  Пользователь вводит желаемый режим
-        switch (enter_input_mode()) {
-            case '1': {
-//  Запись коэффициентов из стандартного ввода
-                clear_screen();
-                enter_coefficients(eq);
-                return true;
-            }
-            case '2': {
-//  Запись коэффициентов из пользовательского файла
-                clear_screen();
-                if (import_coefficients(eq))
-                    return true;
-
-                printf("Select the coefficient input mode again:\n"
-                       "(1 - Keyboard / 2 - File / 3 - Quit)\n");
-                break;
-            }
-            case '3': return false; 
-        }
-    } 
+    switch (input_mode) {
+        case '1': enter_coefficients(eq); return true;
+        case '2': return load_coefficients_from_file(eq);
+        default: printf("ERROR: unknown input mode: %c\n", input_mode); return false;
+    }
+    
 }
 
 
 int enter_input_mode()
 {
-    int answer = 0;
-    
+    int input_mode = 0;
+
+        
     while (true) {
-        answer = getchar();
+        input_mode = getchar();
 
-        if ('1' <= answer && answer <= '3' && check_input_buffer(stdin))
-            return answer;
+        if ('1' <= input_mode && input_mode <= '3' && check_input_buffer(stdin))
+            return input_mode;
 
-        printf("Try again\n");
+        printf("Try again (1 / 2 / 3)\n");
 
         clear_input_buffer();
     }
@@ -277,38 +269,40 @@ void enter_answer(char * answer)
 }
 
 
-bool import_coefficients(Equation * eq)
+bool load_coefficients_from_file(Equation * eq)
 {
     printf("Enter file name:\n");
     
     char file_name[MAX_BUFFER_LEN] = {};
 
     enter_answer(file_name);
+    
+    clear_screen();
 
-//  Если не удалось корректно записать имя файла функция завершает работу
     if (file_name[0] == '\0') {
-        printf("\nThe file name is empty or too long\n");
+        printf("The file name is empty or too long\n\n");
         return false;
     }
 
-//  Проверка возможности доступа к файлу        
-    if (is_file_exists(file_name)) {
-        FILE * in = fopen(file_name, "r"); 
+    FILE * in = fopen(file_name, "r"); 
 
-//  Проверка возможности чтения коэффициентов
-        if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c) && check_input_buffer(in)) {
-            printf("\nImport successful\n");
-            return true;
-        } else {
-            printf("\nFailed to read coefficients from file '%s'\n", file_name);
-        }
-
-        fclose(in);
-    } else {
-        printf("\nFailed to open file '%s'\n", file_name);
+    if (in == NULL) {
+        printf("Failed to open file '%s'\n\n", file_name);
+        return false;
     }
 
-    return false; 
+    if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c)
+        && check_input_buffer(in)) {
+        printf("Import successful\n\n");
+
+        fclose(in);
+        return true;
+    } else {
+        printf("Failed to read coefficients from file '%s'\n\n", file_name);
+
+        fclose(in);
+        return false;
+    }
 }
 
 
@@ -333,37 +327,50 @@ bool check_agreement()
 }
 
 
-void transfer_equation(Equation * eq)
+void print_into_file(Equation * eq)
 {
-    printf("\nDo you want to write the solution to a file? (y/n)\n");
-
-    if (!check_agreement())
-        return;
-
     printf("Enter file name:\n");
 
     char file_name[MAX_BUFFER_LEN] = {};
     enter_answer(file_name);
 
-//  Если не удалось корректно записать имя файла функция завершает работу
+    clear_screen();
+
     if (file_name[0] == '\0') {
-        printf("\nThe file name is empty or too long\n");
+        printf("The file name is empty or too long\n\n");
         return;
     }
-//  Если файла не существует, он создается и записывается
-    if (!is_file_exists(file_name)) {
-        export_equation(eq, file_name, "w");
-        printf("\nThe solution has been successfully written to the file.\n");
-    } else {
-//  Если файл существует, пользователь должен дать согласие на его перезапись
-        printf("\nA file with this name already exists,\n"
-               "do you want to overwrite it? (y/n)\n");
 
-        if (check_agreement()) {
-            export_equation(eq, file_name, "w");
-            printf("\nThe solution has been successfully written to the file.\n");
+    FILE * test = fopen(file_name, "r");
+
+    if (test != NULL) {
+        printf("The file '%s' already exists.\n"
+               "Do you want to overwrite it? (y/n)\n\n", file_name);
+
+        if (!check_agreement()) {
+            fclose(test);
+            return;
         }
-    }  
+    }
+             
+    FILE * out = NULL;
+
+    if (test == NULL)
+        out = fopen(file_name, "w");
+    else
+        out = freopen(file_name, "w", test);
+
+    if (out == NULL) {
+        printf("Cannot export to file %s\n\n", file_name);
+        return; 
+    }
+
+    print_equation(eq, out);
+
+    if (fclose(out) == EOF)
+        printf("The solution was not written to the file.\n\n"); 
+    else
+        printf("The solution has been successfully written to the file.\n\n");
 }
 
 
@@ -408,7 +415,7 @@ bool check_input_buffer(FILE * in)
 }
 
 
-bool is_file_exists(char * file_name)
+bool is_file_available(char * file_name)
 {
     FILE * in = fopen(file_name, "r");
     
@@ -448,7 +455,7 @@ void print_hello()
            "  /   \\            | |_| | ___  | | |  ___   | |   \n"
            " |     |  __       |  _  |/ _ \\ | | | / _ \\  |_|  \n"
            " |  || | |  \\___   | | | |  __/ | | || (_) |  _    \n"
-           " \\_||_/_/          \\_| |_/\\___| |_|_| \\___/  |_|\n");
+           " \\_||_/_/          \\_| |_/\\___| |_|_| \\___/  |_|\n\n");
 
 }
 
