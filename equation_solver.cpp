@@ -18,7 +18,20 @@ typedef enum {
     INFINITE_ROOTS = -1,
 } Equation_roots_count;
 
+//  Режим ввода в меню
+typedef enum {
+    KEYBOARD_INPUT = '1',
+    INPUT_FROM_FILE = '2',
+    QUIT = '3'
+} Input_mode;
+        
+//  Режим пользовательского интерфейса
+typedef enum {
+    UI_OFF = 0,
+    UI_ON = 1
+} UI_mode_switch;
 
+ 
 typedef struct {
 //  Общий вид квадратного уравнения:  ax^2 + bx + c, линейного: bx + c (при а = 0)
     double a, b, c;
@@ -28,8 +41,6 @@ typedef struct {
     double roots[MAX_ROOTS];
 } Equation;
 
-//  Тело программы
-void launch_solver(Equation *);
 //  Главная функция работы с уравнением
 void solve_equation(Equation *);
 
@@ -47,9 +58,9 @@ double find_discriminant(Equation *);
 void solve_quadratic(Equation *);
 
 //  Выбор способа получения коэффициентов
-bool get_coefficients(Equation *, int);
+bool get_coefficients(Equation *, Input_mode);
 //  Ввод пунктов меню
-int enter_input_mode();
+Input_mode enter_input_mode();
 
 //  Ввод коэффициентов уравнения
 void enter_coefficients(Equation *);
@@ -91,47 +102,56 @@ void print_two_roots(Equation *, FILE *);
 //  Выводит сообщение о тождестве
 void print_infinite_roots(FILE *);
 
+//  Изначально включен полноценный пользовательский интерфейс
+UI_mode_switch UI_MODE = UI_ON;
 
-int main()
+
+int main(int argc, char ** argv)
 {
-    Equation data = {};
+    Equation eq = {};
 
-    launch_solver(&data);
+    if (argc == 2 && strcmp(argv[1], "-ui") == 0)
+        UI_MODE = UI_OFF;
 
-    return 0;
-}
+    if (UI_MODE == UI_ON) {
+        clear_screen();
+        print_hello();
+    }
 
-
-void launch_solver(Equation * eq)
-{
-    clear_screen();
-    print_hello();
-   
     while (true) {
         printf("Select the coefficient input mode:\n"
                "1 - Keyboard input\n"
                "2 - Reading from file\n"
                "3 - Quit\n\n");
 
-        int input_mode = enter_input_mode();
+        Input_mode input_mode = enter_input_mode();
 
-        if (input_mode == '3')
+        if (input_mode == QUIT)
             break;
 
-        if (!get_coefficients(eq, input_mode))
+        if (!get_coefficients(&eq, input_mode))
             continue;
 
-        solve_equation(eq);
+        solve_equation(&eq);
 
-        print_equation(eq, stdout);
+        print_equation(&eq, stdout);
        
         printf("\nDo you want to write the solution to a file? (y/n)\n");
 
-        if (check_agreement())
-            print_into_file(eq);
+        if (check_agreement()) {
+            print_into_file(&eq);
+            continue;
+        }
+        
+        if (UI_MODE == UI_ON)
+            clear_screen();
     }
- 
-    print_byebye(); 
+
+    if (UI_MODE == UI_ON) {
+        print_byebye(); 
+    }
+
+    return 0;
 }
 
 
@@ -209,27 +229,32 @@ void solve_quadratic(Equation * eq)
 }
 
 
-bool get_coefficients(Equation * eq, int input_mode)
+bool get_coefficients(Equation * eq, Input_mode input_mode)
 {
     switch (input_mode) {
-        case '1': enter_coefficients(eq); return true;
-        case '2': return load_coefficients_from_file(eq);
-        default: printf("ERROR: unknown input mode: %c\n", input_mode); return false;
+        case KEYBOARD_INPUT: enter_coefficients(eq);
+                  return true;
+        case INPUT_FROM_FILE: return load_coefficients_from_file(eq);
+        default: printf("ERROR: unknown input mode: %c\n", input_mode);
+                 return false;
     }
     
 }
 
 
-int enter_input_mode()
+Input_mode enter_input_mode()
 {
     int input_mode = 0;
 
-        
     while (true) {
         input_mode = getchar();
 
         if ('1' <= input_mode && input_mode <= '3' && check_input_buffer(stdin))
-            return input_mode;
+            switch (input_mode) {
+                case '1': return KEYBOARD_INPUT;
+                case '2': return INPUT_FROM_FILE;
+                case '3': return QUIT;
+            }
 
         printf("Try again (1 / 2 / 3)\n");
 
@@ -258,11 +283,10 @@ void enter_answer(char * answer)
     fgets(answer, MAX_BUFFER_LEN, stdin);
     
     int len = strlen(answer);
-//  Проверка длины имени файла
+
     if (len > 0 && answer[len - 1] == '\n') {
         answer[len - 1] = '\0';
     } else {
-//  Очистка всего в случае неудачного чтения
         answer[0] = '\0';
         clear_input_buffer();
     }
@@ -276,8 +300,9 @@ bool load_coefficients_from_file(Equation * eq)
     char file_name[MAX_BUFFER_LEN] = {};
 
     enter_answer(file_name);
-    
-    clear_screen();
+
+    if (UI_MODE == UI_ON)    
+        clear_screen();
 
     if (file_name[0] == '\0') {
         printf("The file name is empty or too long\n\n");
@@ -334,7 +359,8 @@ void print_into_file(Equation * eq)
     char file_name[MAX_BUFFER_LEN] = {};
     enter_answer(file_name);
 
-    clear_screen();
+    if (UI_MODE == UI_ON)
+        clear_screen();
 
     if (file_name[0] == '\0') {
         printf("The file name is empty or too long\n\n");
