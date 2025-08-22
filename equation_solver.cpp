@@ -61,9 +61,10 @@ void solve_quadratic(Equation *);
 bool get_coefficients(Equation *, Input_mode);
 //  Ввод пунктов меню
 Input_mode enter_input_mode();
-
-//  Ввод коэффициентов уравнения
-void enter_coefficients(Equation *);
+//  Ввод коэффициентов из стандартного ввода
+void enter_coefficients(Equation * eq);
+//  Ввод ответа из стандартного ввода
+void enter_answer(char * answer);
 //  Чтение коэффициентов уравнения из файла
 bool load_coefficients_from_file(Equation *);
 
@@ -75,7 +76,7 @@ void print_into_file(Equation *);
 void export_equation(Equation *, char *, const char *);
 
 //  Вывод корней уравнения
-void print_equation(Equation *, FILE * out);
+void print_equation(Equation *, FILE *);
 
 //  Сравнивание числа с плавающей точкой с нулем
 bool is_zero(double);
@@ -235,7 +236,9 @@ bool get_coefficients(Equation * eq, Input_mode input_mode)
         case KEYBOARD_INPUT: enter_coefficients(eq);
                   return true;
         case INPUT_FROM_FILE: return load_coefficients_from_file(eq);
-        default: printf("ERROR: unknown input mode: %c\n", input_mode);
+        case QUIT: printf("ERROR IN FUNCTONS 'get_coefficients': QUIT in the switch\n");
+                   return false;
+        default: printf("ERROR IN FUNCTION 'get_coefficients': unknown input mode: %c\n", input_mode);
                  return false;
     }
     
@@ -254,6 +257,8 @@ Input_mode enter_input_mode()
                 case '1': return KEYBOARD_INPUT;
                 case '2': return INPUT_FROM_FILE;
                 case '3': return QUIT;
+                default: printf("ERROR IN FUNCTION 'enter_input_mode': unnamed input mode\n");
+                         return QUIT;
             }
 
         printf("Try again (1 / 2 / 3)\n");
@@ -282,7 +287,7 @@ void enter_answer(char * answer)
 {
     fgets(answer, MAX_BUFFER_LEN, stdin);
     
-    int len = strlen(answer);
+    size_t len = strlen(answer);
 
     if (len > 0 && answer[len - 1] == '\n') {
         answer[len - 1] = '\0';
@@ -417,7 +422,7 @@ void print_equation(Equation * eq, FILE * out)
         case ONE_ROOT: print_one_root(eq, out); break;
         case TWO_ROOTS: print_two_roots(eq, out); break;
         case INFINITE_ROOTS: print_infinite_roots(out); break;
-        default: fprintf(out, "ERROR: enum parameter not processed\n"); break;
+        default: fprintf(out, "ERROR IN FUNCTION 'print_equation': enum parameter not processed\n"); break;
     }
 
 }
@@ -503,9 +508,9 @@ void print_byebye()
 void print_no_roots(Equation * eq, FILE * out)
 {
     if (is_zero(eq->a))
-        printf("\n%.2lf = 0 is not identical, no roots\n\n", eq->c);
+        fprintf(out, "\n%.2lf = 0 is not identical, no roots\n\n", eq->c);
     else
-        printf("\n%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n\n",
+        fprintf(out, "\n%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n\n",
                 eq->a, eq->b, eq->c); 
 }
 
