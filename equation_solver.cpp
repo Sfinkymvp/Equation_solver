@@ -10,6 +10,11 @@ const double EPS = 0.00000001;
 //  Допустимая длина имени файла
 const int MAX_BUFFER_LEN = 100;
 
+
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define DEFAULT "\e[0m" 
+
 //  Количество корней уравнения для структуры
 typedef enum {
     NO_ROOTS = 0,
@@ -236,9 +241,9 @@ bool get_coefficients(Equation * eq, Input_mode input_mode)
         case KEYBOARD_INPUT: enter_coefficients(eq);
                   return true;
         case INPUT_FROM_FILE: return load_coefficients_from_file(eq);
-        case QUIT: printf("ERROR IN FUNCTONS 'get_coefficients': QUIT in the switch\n");
+        case QUIT: printf(RED "ERROR IN FUNCTONS 'get_coefficients': QUIT in the switch\n" DEFAULT);
                    return false;
-        default: printf("ERROR IN FUNCTION 'get_coefficients': unknown input mode: %c\n", input_mode);
+        default: printf(RED "ERROR IN FUNCTION 'get_coefficients': unknown input mode: %c\n" DEFAULT, input_mode);
                  return false;
     }
     
@@ -257,11 +262,11 @@ Input_mode enter_input_mode()
                 case '1': return KEYBOARD_INPUT;
                 case '2': return INPUT_FROM_FILE;
                 case '3': return QUIT;
-                default: printf("ERROR IN FUNCTION 'enter_input_mode': unnamed input mode\n");
+                default: printf(RED"ERROR IN FUNCTION 'enter_input_mode': unnamed input mode\n" DEFAULT);
                          return QUIT;
             }
 
-        printf("Try again (1 / 2 / 3)\n");
+        printf(RED "Try again (1 / 2 / 3)\n" DEFAULT);
 
         clear_input_buffer();
     }
@@ -276,7 +281,7 @@ void enter_coefficients(Equation * eq)
         if (3 == scanf("%lf%lf%lf", &eq->a, &eq->b, &eq->c) && check_input_buffer(stdin))
             break;
 
-        printf("Try again\n");
+        printf(RED "Try again\n" DEFAULT);
 
         clear_input_buffer();
     }
@@ -310,25 +315,25 @@ bool load_coefficients_from_file(Equation * eq)
         clear_screen();
 
     if (file_name[0] == '\0') {
-        printf("The file name is empty or too long\n\n");
+        printf(RED "The file name is empty or too long\n\n" DEFAULT);
         return false;
     }
 
     FILE * in = fopen(file_name, "r"); 
 
     if (in == NULL) {
-        printf("Failed to open file '%s'\n\n", file_name);
+        printf(RED "Failed to open file '%s'\n\n" DEFAULT, file_name);
         return false;
     }
 
     if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c)
         && check_input_buffer(in)) {
-        printf("Import successful\n\n");
+        printf(GREEN "Import successful\n\n" DEFAULT);
 
         fclose(in);
         return true;
     } else {
-        printf("Failed to read coefficients from file '%s'\n\n", file_name);
+        printf(RED "Failed to read coefficients from file '%s'\n\n" DEFAULT, file_name);
 
         fclose(in);
         return false;
@@ -368,7 +373,7 @@ void print_into_file(Equation * eq)
         clear_screen();
 
     if (file_name[0] == '\0') {
-        printf("The file name is empty or too long\n\n");
+        printf(RED "The file name is empty or too long\n\n" DEFAULT);
         return;
     }
 
@@ -392,16 +397,16 @@ void print_into_file(Equation * eq)
         out = freopen(file_name, "w", test);
 
     if (out == NULL) {
-        printf("Cannot export to file %s\n\n", file_name);
+        printf(RED "Cannot export to file %s\n\n" DEFAULT, file_name);
         return; 
     }
 
     print_equation(eq, out);
 
     if (fclose(out) == EOF)
-        printf("The solution was not written to the file.\n\n"); 
+        printf(RED "The solution was not written to the file.\n\n" DEFAULT); 
     else
-        printf("The solution has been successfully written to the file.\n\n");
+        printf(GREEN "The solution has been successfully written to the file.\n\n" DEFAULT);
 }
 
 
