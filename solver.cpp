@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "utils.h"
 
+
 void solve_equation(Equation * eq)
 {
     if (is_zero(eq->a))
@@ -12,7 +13,10 @@ void solve_equation(Equation * eq)
         solve_quadratic(eq);
 
     order_roots(eq);
-    normalize_zero(eq);
+//  удаление знака нуля -0.0 -> 0.0 
+    for (int i = 0; i < MAX_ROOTS; i++)
+        if (is_zero(eq->roots[i]))
+            eq->roots[i] = 0.0;
 }
 
 
@@ -24,16 +28,6 @@ void order_roots(Equation * eq)
         eq->roots[0] = eq->roots[1];
         eq->roots[1] = temp;
     }
-}
-
-
-void normalize_zero(Equation * eq)
-{
-    if (is_zero(eq->roots[0]))
-        eq->roots[0] = 0.0;
-
-    if (is_zero(eq->roots[1]))
-        eq->roots[1] = 0.0;
 }
 
 
@@ -51,15 +45,9 @@ void solve_linear(Equation * eq)
 }
 
 
-double find_discriminant(Equation * eq)
-{
-    return eq->b * eq->b - 4.0 * eq->a * eq->c;
-}
-
-
 void solve_quadratic(Equation * eq) 
 {
-    double discriminant = find_discriminant(eq);
+    double discriminant = eq->b * eq->b - 4.0 * eq->a * eq->c;
 
     if (discriminant > EPS) {
         double root_discriminant = sqrt(discriminant);

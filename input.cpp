@@ -63,13 +63,12 @@ bool load_coefficients_from_file(Equation * eq)
     printf("Enter file name:\n");
     
     char file_name[MAX_BUFFER_LEN] = {};
-
-    enter_answer(file_name);
+    bool scan_status = enter_answer(file_name);
 
     if (UI_MODE == UI_ON)    
         clear_screen();
 
-    if (file_name[0] == '\0') {
+    if (!scan_status) {
         printf(RED "The file name is empty or too long\n\n" DEFAULT);
         return false;
     }
@@ -80,17 +79,17 @@ bool load_coefficients_from_file(Equation * eq)
         printf(RED "Failed to open file '%s'\n\n" DEFAULT, file_name);
         return false;
     }
+    
+    int scanf_status = fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c);
+    bool buffer_status = check_input_buffer(in);
 
-    if (3 == fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c)
-        && check_input_buffer(in)) {
+    if (scanf_status == 3 && buffer_status && fclose(in) != EOF) {
         printf(GREEN "Import successful\n\n" DEFAULT);
 
-        fclose(in);
         return true;
     } else {
         printf(RED "Failed to read coefficients from file '%s'\n\n" DEFAULT, file_name);
 
-        fclose(in);
         return false;
     }
 }

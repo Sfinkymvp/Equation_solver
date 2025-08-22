@@ -14,7 +14,7 @@ bool is_zero(double number)
 }
 
 
-void enter_answer(char * answer)
+bool enter_answer(char * answer)
 {
     fgets(answer, MAX_BUFFER_LEN, stdin);
     
@@ -22,9 +22,13 @@ void enter_answer(char * answer)
 
     if (len > 0 && answer[len - 1] == '\n') {
         answer[len - 1] = '\0';
+
+        return true;
     } else {
         answer[0] = '\0';
         clear_input_buffer();
+    
+        return false;
     }
 }
 
@@ -37,9 +41,7 @@ bool check_agreement()
     const int len_agreements = sizeof(agreements) / sizeof(*agreements);    
     char answer[MAX_BUFFER_LEN] = {};
     
-    enter_answer(answer);
-
-    if (answer[0] == '\0')
+    if (!enter_answer(answer))
         return false;
 
     for (int index = 0; index < len_agreements; index++)
@@ -58,19 +60,6 @@ bool check_input_buffer(FILE * in)
         if (!isspace(c))
             return false;
 
-    return true;
-}
-
-
-bool is_file_available(char * file_name)
-{
-    FILE * in = fopen(file_name, "r");
-    
-    if (!in)
-        return false;
-
-    fclose(in);
-    
     return true;
 }
 

@@ -10,12 +10,12 @@ void print_into_file(Equation * eq)
     printf("Enter file name:\n");
 
     char file_name[MAX_BUFFER_LEN] = {};
-    enter_answer(file_name);
+    bool scan_status = enter_answer(file_name);
 
     if (UI_MODE == UI_ON)
         clear_screen();
 
-    if (file_name[0] == '\0') {
+    if (!scan_status) {
         printf(RED "The file name is empty or too long\n\n" DEFAULT);
         return;
     }
