@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #include "input.h"
 #include "constants.h"
@@ -24,20 +26,25 @@ Input_mode enter_input_mode()
 {
     int input_mode = 0;
 
+    printf("Select the coefficient input mode:\n"
+           "1 - Keyboard input\n"
+           "2 - Reading from file\n"
+           "3 - Quit\n\n");
+
     while (true) {
         input_mode = getchar();
 
-        if ('1' <= input_mode && input_mode <= '3' && check_input_buffer(stdin))
+        if (check_input_buffer(stdin))
             switch (input_mode) {
                 case '1': return KEYBOARD_INPUT;
                 case '2': return INPUT_FROM_FILE;
                 case '3': return QUIT;
-                default: printf(RED "ERROR IN FUNCTION 'enter_input_mode': unnamed input mode\n" DEFAULT);
-                         return QUIT;
+                default: printf(RED "Enter a valid character (1 / 2 / 3)\n" DEFAULT);
+                         clear_input_buffer();
+                         continue;
             }
 
-        printf(RED "Try again (1 / 2 / 3)\n" DEFAULT);
-
+        printf(RED "Enter one character (1 / 2 / 3)\n" DEFAULT);
         clear_input_buffer();
     }
 }
@@ -60,23 +67,15 @@ void enter_coefficients(Equation * eq)
 
 bool load_coefficients_from_file(Equation * eq)
 {
-    printf("Enter file name:\n");
-    
     char file_name[MAX_BUFFER_LEN] = {};
-    bool scan_status = enter_answer(file_name);
-
-    if (UI_MODE == UI_ON)    
-        clear_screen();
-
-    if (!scan_status) {
-        printf(RED "The file name is empty or too long\n\n" DEFAULT);
+    
+    if (!enter_file_name(file_name))
         return false;
-    }
 
     FILE * in = fopen(file_name, "r"); 
 
     if (in == NULL) {
-        printf(RED "Failed to open file '%s'\n\n" DEFAULT, file_name);
+        printf(RED "Failed to open file '%s': %s\n\n" DEFAULT, file_name, strerror(errno));
         return false;
     }
     
@@ -85,11 +84,9 @@ bool load_coefficients_from_file(Equation * eq)
 
     if (scanf_status == 3 && buffer_status && fclose(in) != EOF) {
         printf(GREEN "Import successful\n\n" DEFAULT);
-
         return true;
     } else {
         printf(RED "Failed to read coefficients from file '%s'\n\n" DEFAULT, file_name);
-
         return false;
     }
 }

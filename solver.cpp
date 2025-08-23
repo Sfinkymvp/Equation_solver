@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 
 #include "solver.h"
 #include "constants.h"
@@ -7,6 +8,8 @@
 
 void solve_equation(Equation * eq)
 {
+    assert(eq != NULL);
+
     if (is_zero(eq->a))
         solve_linear(eq);
     else
@@ -22,6 +25,8 @@ void solve_equation(Equation * eq)
 
 void order_roots(Equation * eq)
 {
+    assert(eq != NULL);
+
    if (eq->r_count == TWO_ROOTS && eq->roots[0] > eq->roots[1]) {
         double temp = eq->roots[0];
 
@@ -33,6 +38,8 @@ void order_roots(Equation * eq)
 
 void solve_linear(Equation * eq)
 {
+    assert(eq != NULL);
+
     if (is_zero(eq->b) && is_zero(eq->c))
         eq->r_count = INFINITE_ROOTS;
     else if (is_zero(eq->b) && !is_zero(eq->c))
@@ -47,6 +54,9 @@ void solve_linear(Equation * eq)
 
 void solve_quadratic(Equation * eq) 
 {
+    assert(eq != NULL);
+    assert(!is_zero(eq->a));
+
     double discriminant = eq->b * eq->b - 4.0 * eq->a * eq->c;
 
     if (discriminant > EPS) {

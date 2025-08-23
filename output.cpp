@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <assert.h>
 
 #include "output.h"
 #include "constants.h"
@@ -7,54 +10,60 @@
 
 void print_into_file(Equation * eq)
 {
-    printf("Enter file name:\n");
+    assert(eq != NULL);
 
     char file_name[MAX_BUFFER_LEN] = {};
-    bool scan_status = enter_answer(file_name);
 
-    if (UI_MODE == UI_ON)
-        clear_screen();
-
-    if (!scan_status) {
-        printf(RED "The file name is empty or too long\n\n" DEFAULT);
+    if (!enter_file_name(file_name))
         return;
-    }
 
-    FILE * test = fopen(file_name, "r");
-
-    if (test != NULL) {
-        printf("The file '%s' already exists.\n"
-               "Do you want to overwrite it? (y/n)\n\n", file_name);
-
-        if (!check_agreement()) {
-            fclose(test);
-            return;
-        }
-    }
-             
     FILE * out = NULL;
-
-    if (test == NULL)
-        out = fopen(file_name, "w");
-    else
-        out = freopen(file_name, "w", test);
-
-    if (out == NULL) {
-        printf(RED "Cannot export to file %s\n\n" DEFAULT, file_name);
-        return; 
-    }
+    
+    if (!get_output_file(&out, file_name)) 
+        return;
 
     print_equation(eq, out);
 
     if (fclose(out) == EOF)
-        printf(RED "The solution was not written to the file.\n\n" DEFAULT); 
+        printf(RED "The solution was not written: %s\n\n" DEFAULT, strerror(errno)); 
     else
-        printf(GREEN "The solution has been successfully written to the file.\n\n" DEFAULT);
+        printf(GREEN "The solution was successfully written.\n\n" DEFAULT);
+}
+
+
+bool get_output_file(FILE ** out, char * file_name)
+{
+    assert(file_name != NULL);
+
+    FILE * test = fopen(file_name, "r");
+
+    if (test != NULL) {
+        printf("The file '%s' already exists. Do you want to overwrite it? (y/n)\n\n", file_name);
+
+        if (!check_agreement()) {
+            fclose(test);
+            return false;
+        }
+    }
+             
+    if (test == NULL)
+        *out = fopen(file_name, "w");
+    else
+        *out = freopen(file_name, "w", test);
+
+    if (*out == NULL) {
+        printf(RED "Cannot export to file %s: %s\n\n" DEFAULT, file_name, strerror(errno));
+        return false;
+    }
+
+    return true;
 }
 
 
 void print_equation(Equation * eq, FILE * out)
 {   
+    assert(out != NULL);
+
     switch (eq->r_count) {
         case NO_ROOTS: print_no_roots(eq, out); break;
         case ONE_ROOT: print_one_root(eq, out); break;

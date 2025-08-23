@@ -8,6 +8,8 @@
 
 //  Записывает решение уравнения в файл 
 void print_into_file(Equation *);
+//  Получает файл для записи
+bool get_output_file(FILE **, char *);
 //  Вывод корней уравнения
 void print_equation(Equation *, FILE *);
 //  Выводит сообщение о тождественно ложном уравнении

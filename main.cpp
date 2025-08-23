@@ -22,11 +22,6 @@ int main(int argc, char ** argv)
     }
 
     while (true) {
-        printf("Select the coefficient input mode:\n"
-               "1 - Keyboard input\n"
-               "2 - Reading from file\n"
-               "3 - Quit\n\n");
-
         Input_mode input_mode = enter_input_mode();
 
         if (input_mode == QUIT)

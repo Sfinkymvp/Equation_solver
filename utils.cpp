@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "utils.h"
 #include "constants.h"
@@ -33,6 +34,24 @@ bool enter_answer(char * answer)
 }
 
 
+bool enter_file_name(char * file_name)
+{
+    printf("Enter file name:\n");
+    
+    bool enter_status = enter_answer(file_name);
+
+    if (UI_MODE == UI_ON)    
+        clear_screen();
+
+    if (!enter_status) {
+        printf(RED "The file name is empty or too long\n\n" DEFAULT);
+        return false;
+    }
+
+    return true;
+}
+
+
 bool check_agreement()
 {
 //  Возможные ответы пользователя, которые принимаются, как согласие
@@ -54,6 +73,8 @@ bool check_agreement()
 
 bool check_input_buffer(FILE * in)
 {
+    assert(in != NULL);
+
     int c = 0;
 
     while ((c = getc(in)) != '\n' && c != EOF)
