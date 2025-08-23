@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-void solve_equation(Equation * eq)
+void solve_equation(Equation *eq)
 {
     assert(eq != NULL);
 
@@ -23,7 +23,7 @@ void solve_equation(Equation * eq)
 }
 
 
-void order_roots(Equation * eq)
+void order_roots(Equation *eq)
 {
     assert(eq != NULL);
 
@@ -36,7 +36,7 @@ void order_roots(Equation * eq)
 }
 
 
-void solve_linear(Equation * eq)
+void solve_linear(Equation *eq)
 {
     assert(eq != NULL);
 
@@ -52,7 +52,7 @@ void solve_linear(Equation * eq)
 }
 
 
-void solve_quadratic(Equation * eq) 
+void solve_quadratic(Equation *eq) 
 {
     assert(eq != NULL);
     assert(!is_zero(eq->a));

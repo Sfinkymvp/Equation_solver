@@ -15,7 +15,7 @@ bool is_zero(double number)
 }
 
 
-bool enter_answer(char * answer)
+bool enter_answer(char *answer)
 {
     fgets(answer, MAX_BUFFER_LEN, stdin);
     
@@ -34,7 +34,7 @@ bool enter_answer(char * answer)
 }
 
 
-bool enter_file_name(char * file_name)
+bool enter_file_name(char *file_name)
 {
     printf("Enter file name:\n");
     
@@ -55,7 +55,7 @@ bool enter_file_name(char * file_name)
 bool check_agreement()
 {
 //  Возможные ответы пользователя, которые принимаются, как согласие
-    const char * agreements[] = {"yes", "y", "ok", "okay", "1",
+    const char *agreements[] = {"yes", "y", "ok", "okay", "1",
                                  "da", "true", "да", "окей", "ок"};
     const int len_agreements = sizeof(agreements) / sizeof(*agreements);    
     char answer[MAX_BUFFER_LEN] = {};
@@ -71,7 +71,7 @@ bool check_agreement()
 }
 
 
-bool check_input_buffer(FILE * in)
+bool is_buffer_whitespace_only(FILE *in)
 {
     assert(in != NULL);
 

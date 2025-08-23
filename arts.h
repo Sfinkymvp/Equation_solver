@@ -1,9 +1,9 @@
 #ifndef ARTS_H_
 #define ARTS_H_
 
-//  Выводит приветствие с котиком
+/// Печатает ascii art с котиком и надписью Hello!
 void print_hello();
-//  Выводит прощание
+/// Печатает ascii art с надписью ByeBye! 
 void print_byebye();
 
 

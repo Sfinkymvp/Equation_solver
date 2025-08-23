@@ -8,7 +8,7 @@
 #include "utils.h"
 
 
-void print_into_file(Equation * eq)
+void print_into_file(Equation *eq)
 {
     assert(eq != NULL);
 
@@ -17,7 +17,7 @@ void print_into_file(Equation * eq)
     if (!enter_file_name(file_name))
         return;
 
-    FILE * out = NULL;
+    FILE *out = NULL;
     
     if (!get_output_file(&out, file_name)) 
         return;
@@ -31,11 +31,11 @@ void print_into_file(Equation * eq)
 }
 
 
-bool get_output_file(FILE ** out, char * file_name)
+bool get_output_file(FILE **out, char *file_name)
 {
     assert(file_name != NULL);
 
-    FILE * test = fopen(file_name, "r");
+    FILE *test = fopen(file_name, "r");
 
     if (test != NULL) {
         printf("The file '%s' already exists. Do you want to overwrite it? (y/n)\n\n", file_name);
@@ -60,7 +60,7 @@ bool get_output_file(FILE ** out, char * file_name)
 }
 
 
-void print_equation(Equation * eq, FILE * out)
+void print_equation(Equation *eq, FILE *out)
 {   
     assert(out != NULL);
 
@@ -74,7 +74,7 @@ void print_equation(Equation * eq, FILE * out)
 }
 
 
-void print_no_roots(Equation * eq, FILE * out)
+void print_no_roots(Equation *eq, FILE *out)
 {
     if (is_zero(eq->a))
         fprintf(out, "\n%.2lf = 0 is not identical, no roots\n\n", eq->c);
@@ -84,7 +84,7 @@ void print_no_roots(Equation * eq, FILE * out)
 }
 
 
-void print_one_root(Equation * eq, FILE * out)
+void print_one_root(Equation *eq, FILE *out)
 {
     if (is_zero(eq->a))
         fprintf(out, "\n%.2lfx%+.2lf = 0 has one root:\n\n"
@@ -95,14 +95,14 @@ void print_one_root(Equation * eq, FILE * out)
 }
 
 
-void print_two_roots(Equation * eq, FILE * out)
+void print_two_roots(Equation *eq, FILE *out)
 {
     fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n\n"
                  "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);
 }
 
 
-void print_infinite_roots(FILE * out)
+void print_infinite_roots(FILE *out)
 {
     fprintf(out, "\n0 = 0 is an identity, infinite roots\n\n");
 }

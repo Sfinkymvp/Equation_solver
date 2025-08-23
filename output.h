@@ -6,20 +6,46 @@
 
 #include "constants.h"
 
-//  Записывает решение уравнения в файл 
-void print_into_file(Equation *);
-//  Получает файл для записи
-bool get_output_file(FILE **, char *);
-//  Вывод корней уравнения
-void print_equation(Equation *, FILE *);
-//  Выводит сообщение о тождественно ложном уравнении
-void print_no_roots(Equation *, FILE *);
-//  Выводит сообщение о наличии одного корня
-void print_one_root(Equation *, FILE *);
-//  Выводит сообщение о наличии двух корней
-void print_two_roots(Equation *, FILE *);
-//  Выводит сообщение о тождестве
-void print_infinite_roots(FILE *);
+
+/// Записывает решение уравнения в пользовательский файл
+/// @param eq Указатель на структуру с уравнением
+void print_into_file(Equation *eq);
+
+
+/// Получает файл для записи
+/// @param out Указатель на поток вывода
+/// @param file_name Имя файла для записи
+/// Возвращает успешность открытия потока для записи
+bool get_output_file(FILE **out, char *file_name);
+
+
+/// Выводит решения уравнения
+/// @param eq Указатель на структуру с уравнением
+/// @param out Поток вывода
+void print_equation(Equation *eq, FILE *out);
+
+
+/// Печатает сообщение о ложном уравнении
+/// @param eq Указатель на структуру с уравнением
+/// @param out Поток вывода
+void print_no_roots(Equation *eq, FILE *out);
+
+
+/// Печатает сообщение о наличии одного корня
+/// @param eq Указатель на структуру с уравнением
+/// @param out Поток вывода
+void print_one_root(Equation *eq, FILE *out);
+
+
+///  Печатает сообщение о наличии двух корней
+/// @param eq Указатель на структуру с уравнением
+/// @param out Поток вывода
+void print_two_roots(Equation *eq, FILE *out);
+
+
+/// Печатает сообщение о тождестве
+/// @param out Поток вывода
+void print_infinite_roots(FILE *out);
 
 
 #endif  //  OUTPUT_H_

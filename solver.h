@@ -4,14 +4,25 @@
 
 #include "constants.h"
 
-//  Главная функция работы с уравнением
-void solve_equation(Equation *);
-//  Сортирует корни квадратного уравнения
-void order_roots(Equation *);
-//  Решение линейного уравнения
-void solve_linear(Equation *);
-//  Решение квадратного уравнения
-void solve_quadratic(Equation *);
+
+/// Главная функция по решению уравнения
+/// @param eq Указатель на структуру с уравнением
+void solve_equation(Equation *eq);
+
+
+/// Сортирует корни квадратного уравнения
+/// @param eq Указатель на структуру с уравнением
+void order_roots(Equation *eq);
+
+
+/// Решает линейное уравнение
+/// @param eq Указатель на структуру с уравнением
+void solve_linear(Equation *eq);
+
+
+/// Решает квадратное уравнение
+/// @param eq Указатель на структуру с уравнением
+void solve_quadratic(Equation *eq);
 
 
 #endif  //  SOLVER_H_
