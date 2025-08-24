@@ -26,7 +26,7 @@ bool run_tests()
 }
 
 
-bool one_test(Equation * eq, Equation * eq_ref)
+bool one_test(Equation * eq, const Equation * eq_ref)
 {
     solve_equation(eq); 
 

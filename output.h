@@ -9,38 +9,38 @@
 
 /// Записывает решение уравнения в пользовательский файл
 /// @param eq Указатель на структуру с уравнением
-void print_into_file(Equation *eq);
+void print_into_file(const Equation *eq);
 
 
 /// Получает файл для записи
 /// @param out Указатель на поток вывода
 /// @param file_name Имя файла для записи
 /// @return true - поток успешно открыт; false - поток не открыт
-bool get_output_file(FILE **out, char *file_name);
+bool get_output_file(FILE **out, const char *file_name);
 
 
 /// Выводит решения уравнения
 /// @param eq Указатель на структуру с уравнением
 /// @param out Поток вывода
-void print_equation(Equation *eq, FILE *out);
+void print_equation(const Equation *eq, FILE *out);
 
 
 /// Печатает сообщение о ложном уравнении
 /// @param eq Указатель на структуру с уравнением
 /// @param out Поток вывода
-void print_no_roots(Equation *eq, FILE *out);
+void print_no_roots(const Equation *eq, FILE *out);
 
 
 /// Печатает сообщение о наличии одного корня
 /// @param eq Указатель на структуру с уравнением
 /// @param out Поток вывода
-void print_one_root(Equation *eq, FILE *out);
+void print_one_root(const Equation *eq, FILE *out);
 
 
 ///  Печатает сообщение о наличии двух корней
 /// @param eq Указатель на структуру с уравнением
 /// @param out Поток вывода
-void print_two_roots(Equation *eq, FILE *out);
+void print_two_roots(const Equation *eq, FILE *out);
 
 
 /// Печатает сообщение о тождестве

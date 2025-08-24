@@ -9,7 +9,7 @@
 #include "utils.h"
 
 
-void print_into_file(Equation *eq)
+void print_into_file(const Equation *eq)
 {
     assert(eq != NULL);
 
@@ -32,7 +32,7 @@ void print_into_file(Equation *eq)
 }
 
 
-bool get_output_file(FILE **out, char *file_name)
+bool get_output_file(FILE **out, const char *file_name)
 {
     assert(file_name != NULL);
 
@@ -61,7 +61,7 @@ bool get_output_file(FILE **out, char *file_name)
 }
 
 
-void print_equation(Equation *eq, FILE *out)
+void print_equation(const Equation *eq, FILE *out)
 {   
     assert(out != NULL);
 
@@ -75,7 +75,7 @@ void print_equation(Equation *eq, FILE *out)
 }
 
 
-void print_no_roots(Equation *eq, FILE *out)
+void print_no_roots(const Equation *eq, FILE *out)
 {
     if (is_equal(eq->a, 0))
         fprintf(out, "\n%.2lf = 0 is not identical, no roots\n\n", eq->c);
@@ -85,7 +85,7 @@ void print_no_roots(Equation *eq, FILE *out)
 }
 
 
-void print_one_root(Equation *eq, FILE *out)
+void print_one_root(const Equation *eq, FILE *out)
 {
     if (is_equal(eq->a, 0))
         fprintf(out, "\n%.2lfx%+.2lf = 0 has one root:\n\n"
@@ -96,7 +96,7 @@ void print_one_root(Equation *eq, FILE *out)
 }
 
 
-void print_two_roots(Equation *eq, FILE *out)
+void print_two_roots(const Equation *eq, FILE *out)
 {
     fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n\n"
                  "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);

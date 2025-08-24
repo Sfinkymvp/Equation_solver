@@ -14,7 +14,7 @@ bool run_tests();
 /// @param eq Указатель на структуру, в которой находится проверяемое квадратное уравнение
 /// @param eq_ref Указатель на структуру, в которой находится корректные решения квадратного уравнения
 /// @return true - уравнение решено корректно; false - уравнение решено неверно
-bool one_test(Equation * eq, Equation * eq_ref);
+bool one_test(Equation * eq, const Equation * eq_ref);
 
 
 #endif  //  TESTS_H_

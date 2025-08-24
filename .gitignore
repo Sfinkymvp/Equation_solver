@@ -1,7 +1,10 @@
 *.out
+*.o
+obj/
 test_successful
 test_error_read
 test_input
 test_output
 html
 latex
+solve
