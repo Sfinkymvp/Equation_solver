@@ -4,33 +4,24 @@
 
 #include <stdio.h>
 
+#include "constants.h"
+
 
 /// Сравнивает число с плавающей точкой с нулем
 /// @param number Число
-/// @return Результат сравнения 
-bool is_zero(double number);
+/// @return true - число достаточно близко к нулю; false - недостаточно
+bool is_equal(double number1, double number2);
 
 
-/// Получает ответ пользователя
-/// @param Строка для записи ответа
-/// @return Результат успешности записи 
-bool enter_answer(char *answer);
-
-
-/// Получает имя файла от пользователя
-/// @param Строка для записи имени файла
-/// @return Результат успешности записи 
-bool enter_file_name(char *file_name);
-
-
-/// Предлагает пользователю дать согласие на действие
-/// @return Согласие / несогласие пользователя 
-bool check_agreement();
+/// Создает строковую константу с количеством корней уравнения
+/// @param r_count Количество корней уравнения
+/// @return Строковая константа количества корней уравнения
+const char* r_count_to_str(Equation_roots_count r_count);
 
 
 /// Проверяет, содержит ли входной буффер только пробельные символы
-/// @param Входной поток
-/// @return Результат проверки 
+/// @param in Входной поток
+/// @return true - состоит из пробельных символов; false - не только из пробельных
 bool is_buffer_whitespace_only(FILE *in);
 
 

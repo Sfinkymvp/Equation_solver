@@ -9,65 +9,21 @@
 #include "constants.h"
 
 
-bool is_zero(double number)
+bool is_equal(double number1, double number2)
 {
-    return fabs(number) <= EPS;
+    return fabs(number1 - number2) <= EPS;
 }
 
 
-bool enter_answer(char *answer)
+const char* r_count_to_str(Equation_roots_count r_count)
 {
-    fgets(answer, MAX_BUFFER_LEN, stdin);
-    
-    size_t len = strlen(answer);
-
-    if (len > 0 && answer[len - 1] == '\n') {
-        answer[len - 1] = '\0';
-
-        return true;
-    } else {
-        answer[0] = '\0';
-        clear_input_buffer();
-    
-        return false;
+    switch (r_count) {
+        case NO_ROOTS: return "NO_ROOTS";
+        case ONE_ROOT: return "ONE_ROOT";
+        case TWO_ROOTS: return "TWO_ROOTS";
+        case INFINITE_ROOTS: return "INFINITE_ROOTS";
+        default: return "UNKNOWN";
     }
-}
-
-
-bool enter_file_name(char *file_name)
-{
-    printf("Enter file name:\n");
-    
-    bool enter_status = enter_answer(file_name);
-
-    if (UI_MODE == UI_ON)    
-        clear_screen();
-
-    if (!enter_status) {
-        printf(RED "The file name is empty or too long\n\n" DEFAULT);
-        return false;
-    }
-
-    return true;
-}
-
-
-bool check_agreement()
-{
-//  Возможные ответы пользователя, которые принимаются, как согласие
-    const char *agreements[] = {"yes", "y", "ok", "okay", "1",
-                                 "da", "true", "да", "окей", "ок"};
-    const int len_agreements = sizeof(agreements) / sizeof(*agreements);    
-    char answer[MAX_BUFFER_LEN] = {};
-    
-    if (!enter_answer(answer))
-        return false;
-
-    for (int index = 0; index < len_agreements; index++)
-        if (0 == strcasecmp(answer, agreements[index]))
-            return true;
-
-    return false;  
 }
 
 

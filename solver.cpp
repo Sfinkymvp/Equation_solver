@@ -10,7 +10,7 @@ void solve_equation(Equation *eq)
 {
     assert(eq != NULL);
 
-    if (is_zero(eq->a))
+    if (is_equal(eq->a, 0))
         solve_linear(eq);
     else
         solve_quadratic(eq);
@@ -18,7 +18,7 @@ void solve_equation(Equation *eq)
     order_roots(eq);
 //  удаление знака нуля -0.0 -> 0.0 
     for (int i = 0; i < MAX_ROOTS; i++)
-        if (is_zero(eq->roots[i]))
+        if (is_equal(eq->roots[i], 0))
             eq->roots[i] = 0.0;
 }
 
@@ -40,9 +40,9 @@ void solve_linear(Equation *eq)
 {
     assert(eq != NULL);
 
-    if (is_zero(eq->b) && is_zero(eq->c))
+    if (is_equal(eq->b, 0) && is_equal(eq->c, 0))
         eq->r_count = INFINITE_ROOTS;
-    else if (is_zero(eq->b) && !is_zero(eq->c))
+    else if (is_equal(eq->b, 0) && !is_equal(eq->c, 0))
         eq->r_count = NO_ROOTS;
     else {
         eq->r_count = ONE_ROOT;
@@ -55,7 +55,7 @@ void solve_linear(Equation *eq)
 void solve_quadratic(Equation *eq) 
 {
     assert(eq != NULL);
-    assert(!is_zero(eq->a));
+    assert(!is_equal(eq->a, 0));
 
     double discriminant = eq->b * eq->b - 4.0 * eq->a * eq->c;
 
@@ -65,7 +65,7 @@ void solve_quadratic(Equation *eq)
         eq->r_count = TWO_ROOTS;
         eq->roots[0] = (-eq->b - root_discriminant) / (2.0 * eq->a);
         eq->roots[1] = (-eq->b + root_discriminant) / (2.0 * eq->a);
-    } else if (is_zero(discriminant)) {
+    } else if (is_equal(discriminant, 0)) {
         eq->r_count = ONE_ROOT;
         eq->roots[0] = (-eq->b) / (2.0 * eq->a);
         eq->roots[1] = 0.0; 

@@ -6,11 +6,15 @@
 #include "solver.h"
 #include "input.h"
 #include "output.h"
+#include "tests.h"
 #include "arts.h"
 
 
 int main(int argc, char **argv)
 {
+    if (!run_tests())
+        return 1;
+
     Equation eq = {};
 
     if (argc == 2 && strcmp(argv[1], "-ui") == 0)

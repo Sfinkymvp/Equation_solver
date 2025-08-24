@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "output.h"
+#include "input.h"
 #include "constants.h"
 #include "utils.h"
 
@@ -76,7 +77,7 @@ void print_equation(Equation *eq, FILE *out)
 
 void print_no_roots(Equation *eq, FILE *out)
 {
-    if (is_zero(eq->a))
+    if (is_equal(eq->a, 0))
         fprintf(out, "\n%.2lf = 0 is not identical, no roots\n\n", eq->c);
     else
         fprintf(out, "\n%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n\n",
@@ -86,7 +87,7 @@ void print_no_roots(Equation *eq, FILE *out)
 
 void print_one_root(Equation *eq, FILE *out)
 {
-    if (is_zero(eq->a))
+    if (is_equal(eq->a, 0))
         fprintf(out, "\n%.2lfx%+.2lf = 0 has one root:\n\n"
                      "x = %.3lf\n", eq->b, eq->c, eq->roots[0]);
     else

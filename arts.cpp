@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "arts.h"
+
 
 void print_hello() 
 {
@@ -26,4 +28,3 @@ void print_byebye()
            "       |___/              |___/              \n");
             
 }
-

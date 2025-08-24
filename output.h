@@ -15,7 +15,7 @@ void print_into_file(Equation *eq);
 /// Получает файл для записи
 /// @param out Указатель на поток вывода
 /// @param file_name Имя файла для записи
-/// Возвращает успешность открытия потока для записи
+/// @return true - поток успешно открыт; false - поток не открыт
 bool get_output_file(FILE **out, char *file_name);
 
 
