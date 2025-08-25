@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "constants.h"
+#include "parameters.h"
 #include "utils.h"
 #include "solver.h"
 #include "input.h"
@@ -15,12 +16,11 @@ int main(int argc, char **argv)
     if (!run_tests())
         return 1;
 
+    parse_args(argc, argv); 
+
     Equation eq = {};
 
-    if (argc == 2 && strcmp(argv[1], "-ui") == 0)
-        UI_MODE = UI_OFF;
-
-    if (UI_MODE == UI_ON) {
+    if (get_ui_mode() == UI_ON) {
         clear_screen();
         print_hello();
     }
@@ -45,11 +45,11 @@ int main(int argc, char **argv)
             continue;
         }
         
-        if (UI_MODE == UI_ON)
+        if (get_ui_mode() == UI_ON)
             clear_screen();
     }
 
-    if (UI_MODE == UI_ON) {
+    if (get_ui_mode() == UI_ON) {
         print_byebye(); 
     }
 

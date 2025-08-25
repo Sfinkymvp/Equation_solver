@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include "utils.h"
+#include "parameters.h"
 #include "constants.h"
 
 
@@ -15,7 +16,7 @@ bool is_equal(double number1, double number2)
 }
 
 
-const char* r_count_to_str(Equation_roots_count r_count)
+const char *r_count_to_str(Equation_roots_count r_count)
 {
     switch (r_count) {
         case NO_ROOTS: return "NO_ROOTS";
@@ -23,6 +24,18 @@ const char* r_count_to_str(Equation_roots_count r_count)
         case TWO_ROOTS: return "TWO_ROOTS";
         case INFINITE_ROOTS: return "INFINITE_ROOTS";
         default: return "UNKNOWN";
+    }
+}
+
+
+void parse_args(int argc, char **argv)
+{
+    for (int index = 0; index < argc; index++) {
+        if (0 == strcmp(argv[index], "-ui") && get_ui_mode() == UI_ON)
+            change_ui_mode(UI_OFF);
+
+        if (0 == strcmp(argv[index], "-test") && get_test_mode() == TEST_OFF)
+            change_test_mode(TEST_ON);
     }
 }
 

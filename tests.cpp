@@ -11,7 +11,8 @@ bool run_tests()
     Equation equations[] = {{1, -5, 4}, {.r_count = TWO_ROOTS, .roots = {1, 4}},
                             {1, -2, 1}, {.r_count = ONE_ROOT, .roots = {1, 0}},
                             {1, 0, 5}, {.r_count = NO_ROOTS, .roots = {0, 0}},
-                            {0, 2, 5}, {.r_count = ONE_ROOT, .roots = {-2.5, 0}}, {0, -1, 0}, {.r_count = ONE_ROOT, .roots = {0, 0}},
+                            {0, 2, 5}, {.r_count = ONE_ROOT, .roots = {-2.5, 0}},
+                            {0, -1, 0}, {.r_count = ONE_ROOT, .roots = {0, 0}},
                             {0, 0, 5}, {.r_count = NO_ROOTS, .roots = {0, 0}},
                             {0, 0, 0}, {.r_count = INFINITE_ROOTS, .roots = {0, 0}}};
 

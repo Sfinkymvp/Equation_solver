@@ -43,13 +43,6 @@ typedef enum {
 } Input_mode;
  
        
-/// Режим работы расширенного пользовательского интерфейса
-typedef enum {
-    UI_OFF = 0,  ///< Выключен
-    UI_ON = 1    ///< Включен
-} UI_mode_switch;
-
-
 /**
 * Структура для хранения данных об уравнении не выше второй степени
 *
@@ -68,9 +61,6 @@ typedef struct {
     Equation_roots_count r_count; ///< Количество корней уравнения
     double roots[MAX_ROOTS];      ///< Массив для хранения корней (До 2 корней)
 } Equation;
-
-
-extern UI_mode_switch UI_MODE; ///< Глобальная переменная, отвечающая за режим работы пользовательского интерфейса
 
 
 #endif  //  CONSTANTS_H_

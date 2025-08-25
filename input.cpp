@@ -4,6 +4,7 @@
 
 #include "input.h"
 #include "constants.h"
+#include "parameters.h"
 #include "utils.h"
 
 
@@ -15,12 +16,10 @@ bool enter_answer(char *answer)
 
     if (len > 0 && answer[len - 1] == '\n') {
         answer[len - 1] = '\0';
-
         return true;
     } else {
         answer[0] = '\0';
         clear_input_buffer();
-    
         return false;
     }
 }
@@ -32,7 +31,7 @@ bool enter_file_name(char *file_name)
     
     bool enter_status = enter_answer(file_name);
 
-    if (UI_MODE == UI_ON)    
+    if (get_ui_mode() == UI_ON)    
         clear_screen();
 
     if (!enter_status) {

@@ -20,9 +20,9 @@ FLAGS = -D_DEBUG -ggdb3 -std=c++17 -O0 \
 OBJDIR = obj
 
 solve: $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o \
-    $(OBJDIR)/constants.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o
+    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o
 	@g++ $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o \
-    $(OBJDIR)/constants.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o $(FLAGS) -o solve
+    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o $(FLAGS) -o solve
 
 $(OBJDIR)/main.o: main.cpp
 	@g++ -c main.cpp $(FLAGS) -o $(OBJDIR)/main.o
@@ -36,8 +36,8 @@ $(OBJDIR)/output.o: output.cpp
 $(OBJDIR)/solver.o: solver.cpp
 	@g++ -c solver.cpp $(FLAGS) -o $(OBJDIR)/solver.o
 
-$(OBJDIR)/constants.o: constants.cpp
-	@g++ -c constants.cpp $(FLAGS) -o $(OBJDIR)/constants.o
+$(OBJDIR)/parameters.o: parameters.cpp
+	@g++ -c parameters.cpp $(FLAGS) -o $(OBJDIR)/parameters.o
 
 $(OBJDIR)/tests.o: tests.cpp
 	@g++ -c tests.cpp $(FLAGS) -o $(OBJDIR)/tests.o

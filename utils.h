@@ -19,6 +19,12 @@ bool is_equal(double number1, double number2);
 const char* r_count_to_str(Equation_roots_count r_count);
 
 
+/// Обрабатывает аргументы командной строки
+/// @param argc Количество параметров
+/// @param argv Массив с параметрами
+void parse_args(int argc, char **argv);
+
+
 /// Проверяет, содержит ли входной буффер только пробельные символы
 /// @param in Входной поток
 /// @return true - состоит из пробельных символов; false - не только из пробельных
