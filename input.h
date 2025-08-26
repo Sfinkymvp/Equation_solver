@@ -3,6 +3,7 @@
 
 
 #include "constants.h"
+#include "tests.h"
 #include "utils.h"
 
 
@@ -40,10 +41,23 @@ Input_mode enter_input_mode();
 void enter_coefficients(Equation *eq);
 
 
-/// Получает коэффициенты уравнения из пользоватеского файла
+/// Получает коэффициенты уравнения из пользовательского файла
 /// @param eq Указатель на структуру с уравнением
 /// @return true - коэффициенты получены из файла; false - коэффициенты не получены
 bool load_coefficients_from_file(Equation *eq);
+
+
+/// Считывает пользовательские тесты из указанного файла
+/// @param tests Динамический массив для хранения уравнений (тестов)
+/// @param in Поток ввода
+/// @return true - тесты успешно считаны; false - тесты не считаны
+bool enter_tests(Tests * tests, FILE * in);
+
+
+/// Загружает пользовательские тесты из файла
+/// @param tests Динамический массив для хранения уравнений (тестов)
+/// @return true - все тесты получены; false - тесты не получены
+bool load_tests_from_file(Tests * tests);
 
 
 #endif  //  INPUT_H_

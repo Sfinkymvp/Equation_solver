@@ -7,6 +7,7 @@
 #include "input.h"
 #include "constants.h"
 #include "utils.h"
+#include "tests.h"
 
 
 void print_into_file(const Equation *eq)
@@ -32,32 +33,37 @@ void print_into_file(const Equation *eq)
 }
 
 
-bool get_output_file(FILE **out, const char *file_name)
+void print_tests_into_file(const Tests * tests)
 {
-    assert(file_name != NULL);
+    assert(tests->equations != NULL);
 
-    FILE *test = fopen(file_name, "r");
+    char file_name[MAX_BUFFER_LEN] = {};
 
-    if (test != NULL) {
-        printf("The file '%s' already exists. Do you want to overwrite it? (y/n)\n\n", file_name);
+    if (!enter_file_name(file_name))
+        return;
 
-        if (!check_agreement()) {
-            fclose(test);
-            return false;
-        }
-    }
-             
-    if (test == NULL)
-        *out = fopen(file_name, "w");
-    else
-        *out = freopen(file_name, "w", test);
+    FILE *out = NULL;
+    
+    if (!get_output_file(&out, file_name)) 
+        return;
 
-    if (*out == NULL) {
-        printf(RED "Cannot export to file %s: %s\n\n" DEFAULT, file_name, strerror(errno));
-        return false;
-    }
+    for (int index = 0; index < tests->len; index++)
+        if (tests->equations[index].status == TEST_ERR)
+            print_failed_test(&tests->equations[index], out);
 
-    return true;
+    if (fclose(out) == EOF)
+        printf(RED "Incorrect solutions were not written to the file\n" DEFAULT);
+    else 
+        printf(GREEN "Incorrect solutions were written to the file\n" DEFAULT);
+}
+
+
+void print_failed_test(const Test_equation * test, FILE *out)
+{
+    print_equation(&test->ref, out);
+
+    fprintf(out, "In a user solution: r_count = %s, x1 = %lf, x2 = %lf\n\n",
+    r_count_to_str(test->eq.r_count), test->eq.roots[0], test->eq.roots[1]);
 }
 
 

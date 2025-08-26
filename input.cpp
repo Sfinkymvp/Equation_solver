@@ -5,7 +5,9 @@
 #include "input.h"
 #include "constants.h"
 #include "parameters.h"
+#include "solver.h"
 #include "utils.h"
+#include "tests.h"
 
 
 bool enter_answer(char *answer)
@@ -126,13 +128,11 @@ bool load_coefficients_from_file(Equation *eq)
     if (!enter_file_name(file_name))
         return false;
 
-    FILE *in = fopen(file_name, "r"); 
+    FILE *in = NULL;
 
-    if (in == NULL) {
-        printf(RED "Failed to open file '%s': %s\n\n" DEFAULT, file_name, strerror(errno));
+    if (!get_input_file(&in, file_name))
         return false;
-    }
-    
+
     int scanf_status = fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c);
     bool buffer_status = is_buffer_whitespace_only(in);
 
@@ -143,4 +143,56 @@ bool load_coefficients_from_file(Equation *eq)
         printf(RED "Failed to read coefficients from file '%s'\n\n" DEFAULT, file_name);
         return false;
     }
+}
+
+
+bool enter_tests(Tests * tests, FILE * in)
+{
+    for (tests->len = 0; true; tests->len++) {
+        if (tests->len >= tests->cap)
+            if (!resize_tests(tests)) {
+                printf(RED "Memory allocation error\n" DEFAULT);
+                return false;
+            } 
+
+        int roots_count = 0; 
+        int read_count = fscanf(in, "%lf %lf %lf %d %lf %lf",
+        &tests->equations[tests->len].eq.a, &tests->equations[tests->len].eq.b, &tests->equations[tests->len].eq.c,
+        &roots_count, &tests->equations[tests->len].eq.roots[0],
+        &tests->equations[tests->len].eq.roots[1]);
+
+        tests->equations[tests->len].eq.r_count = (Equation_roots_count)roots_count;
+
+        if (read_count == EOF) {
+            order_roots(&tests->equations[tests->len].eq);
+            return true;
+        }
+
+        int ch = 0;
+
+        while ((ch = getc(in)) == ' ' || ch == '\t')
+            ;
+
+        if ((ch != '\n' && ch != EOF) || read_count != 6) {
+            printf(RED "The file contains lines that do not match the format:\n"
+                   "a b c roots_count x1 x2\n" DEFAULT);
+            return false;
+        }
+      }
+}
+
+
+bool load_tests_from_file(Tests * tests)
+{
+    char file_name[MAX_BUFFER_LEN] = {};
+
+    if (!enter_file_name(file_name))
+        return false;
+
+    FILE *in = NULL;
+
+    if (!get_input_file(&in, file_name))
+        return false;
+
+    return enter_tests(tests, in) && fclose(in) == 0;
 }

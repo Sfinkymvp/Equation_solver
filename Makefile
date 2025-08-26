@@ -49,4 +49,3 @@ $(OBJDIR)/arts.o: arts.cpp
 	@g++ -c arts.cpp $(FLAGS) -o $(OBJDIR)/arts.o
 
 
-

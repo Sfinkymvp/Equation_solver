@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "parameters.h"
+#include "constants.h"
 
 
 static UI_mode_state ui_state = {UI_ON, 0};
@@ -27,7 +28,7 @@ void change_ui_mode(UI_mode_switch new_ui_mode)
         ui_state.mode = new_ui_mode;
         ui_state.counter++;
     } else
-        printf("Repeated access to the UI_MODE variable is prohibited\n");
+        printf(RED "Repeated access to the UI_MODE variable is prohibited\n" DEFAULT);
 }
 
 
@@ -37,5 +38,5 @@ void change_test_mode(TEST_mode_switch new_test_mode)
         test_state.mode = new_test_mode;
         test_state.counter++;
     } else
-        printf("Repeated access to the TEST_MODE variable is prohibited\n");
+        printf(RED "Repeated access to the TEST_MODE variable is prohibited\n" DEFAULT);
 }

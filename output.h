@@ -5,18 +5,23 @@
 #include <stdio.h>
 
 #include "constants.h"
+#include "tests.h"
 
 
-/// Записывает решение уравнения в пользовательский файл
+/// Записывает решение уравнения в указанный файл
 /// @param eq Указатель на структуру с уравнением
 void print_into_file(const Equation *eq);
 
 
-/// Получает файл для записи
-/// @param out Указатель на поток вывода
-/// @param file_name Имя файла для записи
-/// @return true - поток успешно открыт; false - поток не открыт
-bool get_output_file(FILE **out, const char *file_name);
+/// Записывает результаты неудачных тестов в указанный файл
+/// @param tests Динамический массив для хранения уравнений (тестов)
+void print_tests_into_file(const Tests * tests);
+
+
+/// Печатает сообщение о неудачном решении в указанный файл
+/// @param test Тест с пользовательским и правильным решением
+/// @param out Поток вывода
+void print_failed_test(const Test_equation * test, FILE *out);
 
 
 /// Выводит решения уравнения

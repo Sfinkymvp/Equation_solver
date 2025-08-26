@@ -14,6 +14,10 @@ const double EPS = 0.00000001;
 const int MAX_BUFFER_LEN = 100;
 
 
+/// Начальная вместимость динамического массива с тестами
+const int START_TESTS_CAP = 8;
+
+
 /// Цвет для печати ошибок
 #define RED "\033[31m"
 

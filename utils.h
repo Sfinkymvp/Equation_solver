@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "constants.h"
+#include "tests.h"
 
 
 /// Сравнивает число с плавающей точкой с нулем
@@ -23,6 +24,26 @@ const char* r_count_to_str(Equation_roots_count r_count);
 /// @param argc Количество параметров
 /// @param argv Массив с параметрами
 void parse_args(int argc, char **argv);
+
+
+/// Удваивает длину динамического массива
+/// @param tests Динамический массив для хранения уравнений (тестов)
+/// @return true - длина удвоена; false - возникла проблема с памятью
+bool resize_tests(Tests * tests);
+
+
+/// Получает файл для чтения
+/// @param in Указатель на поток ввода
+/// @param file_name Имя файла для записи
+/// @return true - поток успешно открыт; false - поток не открыт 
+bool get_input_file(FILE **in, const char *file_name);
+
+
+/// Получает файл для записи
+/// @param out Указатель на поток вывода
+/// @param file_name Имя файла для записи
+/// @return true - поток успешно открыт; false - поток не открыт
+bool get_output_file(FILE **out, const char *file_name);
 
 
 /// Проверяет, содержит ли входной буффер только пробельные символы

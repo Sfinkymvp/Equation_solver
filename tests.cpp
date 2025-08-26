@@ -1,48 +1,48 @@
 #include <stdio.h>
 
 #include "tests.h"
+#include "input.h"
+#include "output.h"
 #include "constants.h"
 #include "utils.h"
 #include "solver.h"
 
 
-bool run_tests()
+void run_tests(Tests *tests)
 {
-    Equation equations[] = {{1, -5, 4}, {.r_count = TWO_ROOTS, .roots = {1, 4}},
-                            {1, -2, 1}, {.r_count = ONE_ROOT, .roots = {1, 0}},
-                            {1, 0, 5}, {.r_count = NO_ROOTS, .roots = {0, 0}},
-                            {0, 2, 5}, {.r_count = ONE_ROOT, .roots = {-2.5, 0}},
-                            {0, -1, 0}, {.r_count = ONE_ROOT, .roots = {0, 0}},
-                            {0, 0, 5}, {.r_count = NO_ROOTS, .roots = {0, 0}},
-                            {0, 0, 0}, {.r_count = INFINITE_ROOTS, .roots = {0, 0}}};
-
-    int len_equations = sizeof(equations) / sizeof(*equations);
-    bool correctness_flag = true;
-
-    for (int index = 0; index < len_equations; index += 2)
-        if (!one_test(&equations[index], &equations[index + 1]))
-            correctness_flag = false;
-    
-    return correctness_flag; 
+    for (int index = 0; index < tests->len; index++)
+        solve_test(&tests->equations[index]);
 }
 
 
-bool one_test(Equation * eq, const Equation * eq_ref)
+void solve_test(Test_equation *test)
 {
-    solve_equation(eq); 
+    test->ref = test->eq;
 
-    if (eq->r_count == eq_ref->r_count && is_equal(eq->roots[0], eq_ref->roots[0])
-        && is_equal(eq->roots[1], eq_ref->roots[1]))
-        return true;
-    
+    solve_equation(&test->ref);
 
-    printf("ERROR IN FUNCTION: 'one_test' in the equation with coefficients a = %.5lf, b = %.5lf, c = %.5lf\n"
-           "Incorrect number of roots or incorrect roots:\n", eq->a, eq->b, eq->c);
-
-    printf("r_count = %s (should be r_count = %s)\n"
-           "x1 = %.5lf, x2 = %.5lf (should be x1 = %.5lf, x2 = %.5lf)\n",
-           r_count_to_str(eq->r_count), r_count_to_str(eq_ref->r_count),
-           eq->roots[0], eq->roots[1], eq_ref->roots[0], eq_ref->roots[1]);
-
-    return false;
+    if (test->ref.r_count == test->eq.r_count
+        && is_equal(test->ref.roots[0], test->eq.roots[0])
+        && is_equal(test->ref.roots[1], test->eq.roots[1]))
+        test->status = TEST_OK;
+    else
+        test->status = TEST_ERR;
 }
+
+
+void is_tests_correct(Tests *tests)
+{
+    for (int index = 0; index < tests->len; index++)
+        if (tests->equations[index].status == TEST_ERR) {
+            printf(RED "Not all tests passed.\n" DEFAULT
+                       "Do you want to write the incorrect solutions to a file? (y/n)\n");
+
+            if (check_agreement())
+                print_tests_into_file(tests);
+
+            return;
+        }
+
+    printf(GREEN "All tests passed\n" DEFAULT);
+}
+

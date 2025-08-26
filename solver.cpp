@@ -27,7 +27,7 @@ void order_roots(Equation *eq)
 {
     assert(eq != NULL);
 
-   if (eq->r_count == TWO_ROOTS && eq->roots[0] > eq->roots[1]) {
+    if (eq->r_count == TWO_ROOTS && eq->roots[0] > eq->roots[1]) {
         double temp = eq->roots[0];
 
         eq->roots[0] = eq->roots[1];

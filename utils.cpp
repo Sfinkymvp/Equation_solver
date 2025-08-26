@@ -4,10 +4,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <errno.h>
 
 #include "utils.h"
 #include "parameters.h"
 #include "constants.h"
+#include "tests.h"
+#include "input.h"
 
 
 bool is_equal(double number1, double number2)
@@ -37,6 +40,75 @@ void parse_args(int argc, char **argv)
         if (0 == strcmp(argv[index], "-test") && get_test_mode() == TEST_OFF)
             change_test_mode(TEST_ON);
     }
+}
+
+
+bool resize_tests(Tests *tests)
+{
+    if (tests->cap == 0) {
+        tests->cap = START_TESTS_CAP;
+        tests->equations = (Test_equation*)calloc(START_TESTS_CAP, sizeof(Test_equation));
+    } else {
+        tests->cap *= 2;
+        Test_equation *temp = (Test_equation*)realloc(tests->equations, (long unsigned int)tests->cap * sizeof(Test_equation));
+
+        if (temp != NULL) {
+            tests->equations = temp;
+        } else {
+            printf(RED "Memory allocation error\n" DEFAULT);
+            return false;
+        }
+    }
+
+    for (int index = tests->cap / 2; index < tests->cap; index++)
+        memset(&tests->equations[index], 0, sizeof(Test_equation));
+
+    return true;
+}
+
+
+bool get_input_file(FILE **in, const char *file_name)
+{
+    *in = fopen(file_name, "r"); 
+
+    if (*in == NULL) {
+        printf(RED "Failed to open file '%s': %s\n\n" DEFAULT, file_name, strerror(errno));
+        return false;
+    }
+
+    return true;
+}
+
+ 
+bool get_output_file(FILE **out, const char *file_name)
+{
+    assert(file_name != NULL);
+
+    FILE *test = fopen(file_name, "r");
+
+    if (test != NULL) {
+        printf("The file '%s' already exists. Do you want to overwrite it? (y/n)\n\n", file_name);
+
+        if (!check_agreement()) {
+            fclose(test);
+            return false;
+        }
+    }
+             
+    if (test == NULL)
+        *out = fopen(file_name, "w");
+    else
+        *out = freopen(file_name, "w", test);
+
+    if (*out == NULL) {
+        if (test != NULL)
+            fclose(test);
+
+        printf(RED "Cannot export to file %s: %s\n\n" DEFAULT, file_name, strerror(errno));
+        return false;
+    }
+
+    return true;
 }
 
 
