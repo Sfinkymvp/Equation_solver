@@ -54,9 +54,10 @@ int main(int argc, char **argv)
             run_tests(&tests);
 
             is_tests_correct(&tests);
-
-            free(tests.equations);
         }
+
+        if (tests.equations != NULL)
+            free(tests.equations);
     }
 
     if (get_ui_mode() == UI_ON) {

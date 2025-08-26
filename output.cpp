@@ -84,9 +84,9 @@ void print_equation(const Equation *eq, FILE *out)
 void print_no_roots(const Equation *eq, FILE *out)
 {
     if (is_equal(eq->a, 0))
-        fprintf(out, "\n%.2lf = 0 is not identical, no roots\n", eq->c);
+        fprintf(out, "%.2lf = 0 is not identical, no roots\n", eq->c);
     else
-        fprintf(out, "\n%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n",
+        fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has a negative discriminant, no roots\n",
                 eq->a, eq->b, eq->c); 
 }
 
@@ -94,22 +94,22 @@ void print_no_roots(const Equation *eq, FILE *out)
 void print_one_root(const Equation *eq, FILE *out)
 {
     if (is_equal(eq->a, 0))
-        fprintf(out, "\n%.2lfx%+.2lf = 0 has one root:\n\n"
+        fprintf(out, "%.2lfx%+.2lf = 0 has one root:\n"
                      "x = %.3lf\n", eq->b, eq->c, eq->roots[0]);
     else
-        fprintf(out, "\n%.2lfx^2%+.2lfx%+.2lf = 0 has one root:\n\n"
+        fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has one root:\n"
                      "x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0]);
 }
 
 
 void print_two_roots(const Equation *eq, FILE *out)
 {
-    fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n\n"
+    fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n"
                  "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);
 }
 
 
 void print_infinite_roots(FILE *out)
 {
-    fprintf(out, "\n0 = 0 is an identity, infinite roots\n");
+    fprintf(out, "0 = 0 is an identity, infinite roots\n");
 }

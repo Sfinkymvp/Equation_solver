@@ -90,6 +90,9 @@ Input_mode enter_input_mode()
     while (true) {
         input_mode = getchar();
 
+        if (input_mode == EOF)
+            return QUIT;
+
         if (is_buffer_whitespace_only(stdin))
             switch (input_mode) {
                 case '1': return KEYBOARD_INPUT;
@@ -112,6 +115,9 @@ void enter_coefficients(Equation *eq)
 
     while (true) {
         if (3 == scanf("%lf%lf%lf", &eq->a, &eq->b, &eq->c) && is_buffer_whitespace_only(stdin))
+            break;
+
+        if (getchar() == EOF)
             break;
 
         printf(RED "Try again\n" DEFAULT);
