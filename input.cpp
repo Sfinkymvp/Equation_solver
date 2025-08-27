@@ -167,7 +167,10 @@ bool enter_tests(Tests * tests, FILE * in)
         &roots_count, &tests->equations[tests->len].eq.roots[0],
         &tests->equations[tests->len].eq.roots[1]);
 
-        tests->equations[tests->len].eq.r_count = (Equation_roots_count)roots_count;
+        if (!choose_roots_count(&tests->equations[tests->len].eq.r_count, roots_count)) {
+            printf(RED "incorrect number of roots in one of the equations from the file\n" DEFAULT);
+            return false;
+        }
 
         if (read_count == EOF) {
             order_roots(&tests->equations[tests->len].eq);

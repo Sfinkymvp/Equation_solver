@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     Equation eq = {};
 
     if (get_help_mode() == HELP_ON) {
-        printf("%s", HELP_SENTENCE);
+        printf("%s", HELP_MESSAGE);
         return 0;
     }
 

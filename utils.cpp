@@ -31,6 +31,18 @@ const char *r_count_to_str(Equation_roots_count r_count)
 }
 
 
+bool choose_roots_count(Equation_roots_count *r_count, int selected_number)
+{
+    switch (selected_number) {
+        case -1: *r_count = INFINITE_ROOTS; return true;
+        case 0: *r_count = NO_ROOTS; return true;
+        case 1: *r_count = ONE_ROOT; return true;
+        case 2: *r_count = TWO_ROOTS; return true;
+        default: *r_count = NO_ROOTS; return false;
+    }
+}
+
+
 void parse_args(int argc, char **argv)
 {
     for (int index = 0; index < argc; index++) {
@@ -48,19 +60,21 @@ void parse_args(int argc, char **argv)
 
 bool resize_tests(Tests *tests)
 {
+    Test_equation *temp = NULL;
+
     if (tests->cap == 0) {
         tests->cap = START_TESTS_CAP;
-        tests->equations = (Test_equation*)calloc(START_TESTS_CAP, sizeof(Test_equation));
+        temp = (Test_equation*)calloc(START_TESTS_CAP, sizeof(Test_equation));
     } else {
         tests->cap *= 2;
-        Test_equation *temp = (Test_equation*)realloc(tests->equations, (long unsigned int)tests->cap * sizeof(Test_equation));
+        temp = (Test_equation*)realloc(tests->equations, (long unsigned int)tests->cap * sizeof(Test_equation));
+    }
 
-        if (temp != NULL) {
-            tests->equations = temp;
-        } else {
-            printf(RED "Memory allocation error\n" DEFAULT);
-            return false;
-        }
+    if (temp != NULL) {
+        tests->equations = temp;
+    } else {
+        printf(RED "Memory allocation error\n" DEFAULT);
+        return false;
     }
 
     for (int index = tests->cap / 2; index < tests->cap; index++)

@@ -20,6 +20,13 @@ bool is_equal(double number1, double number2);
 const char* r_count_to_str(Equation_roots_count r_count);
 
 
+/// Выбирает количество корней уравнения
+/// @param r_count Указатель на количество корней уравнения
+/// @param selected_number Вводимое пользователем количество корней уравнения
+/// @return true - количество корней корректно; false - количество корней некорректно
+bool choose_roots_count(Equation_roots_count *r_count, int selected_number);
+
+
 /// Обрабатывает аргументы командной строки
 /// @param argc Количество параметров
 /// @param argv Массив с параметрами

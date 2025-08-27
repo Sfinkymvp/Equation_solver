@@ -4,7 +4,7 @@
 #include "constants.h"
 
 
-const char HELP_SENTENCE[] = "Usage:\n"
+const char HELP_MESSAGE[] = "Usage:\n"
                              "\t./solve [PARAMETERS]\n\n"
                              "Description:\n"
                              "\tEquation solver.\n"
@@ -18,41 +18,47 @@ const char HELP_SENTENCE[] = "Usage:\n"
                              "\t\tIf no roots: '0'\n"
                              "\t\tIf one root: '1'\n"
                              "\t\tIf two roots: '2'\n"
-                             "\t\tif infinite roots: '-1'\n\n";
+                             "\t\tIf infinite roots: '-1'\n\n"
+                             "Options:\n"
+                             "\t--help  Show this help message\n"
+                             "\t--test  Enable test mode\n"
+                             "\t--ui    Disable standard user interface\n";
 
 
-static UI_mode_state ui_state = {UI_ON, 0};
+static UI_mode_switch ui_mode = UI_ON;
 
 
-static TEST_mode_state test_state = {TEST_OFF, 0};
+static TEST_mode_switch test_mode = TEST_OFF;
 
 
-static HELP_mode_state help_state = {HELP_OFF, 0};
+static HELP_mode_switch help_mode = HELP_OFF;
 
 
 UI_mode_switch get_ui_mode()
 {
-    return ui_state.mode; 
+    return ui_mode;
 }
 
 
 TEST_mode_switch get_test_mode()
 {
-    return test_state.mode;
+    return test_mode;
 }
 
 
 HELP_mode_switch get_help_mode()
 {
-    return help_state.mode;
+    return help_mode;
 }
 
 
 void change_ui_mode(UI_mode_switch new_ui_mode)
 {
-    if (ui_state.counter == 0) {
-        ui_state.mode = new_ui_mode;
-        ui_state.counter++;
+    static int ui_change_counter = 0;
+
+    if (ui_change_counter == 0) {
+        ui_mode = new_ui_mode;
+        ui_change_counter++;
     } else
         printf(RED "Repeated access to the UI_MODE variable is prohibited\n" DEFAULT);
 }
@@ -60,9 +66,11 @@ void change_ui_mode(UI_mode_switch new_ui_mode)
 
 void change_test_mode(TEST_mode_switch new_test_mode)
 {
-    if (test_state.counter == 0) {
-        test_state.mode = new_test_mode;
-        test_state.counter++;
+    static int test_change_counter = 0;
+
+    if (test_change_counter == 0) {
+        test_mode = new_test_mode;
+        test_change_counter++;
     } else
         printf(RED "Repeated access to the TEST_MODE variable is prohibited\n" DEFAULT);
 }
@@ -70,9 +78,11 @@ void change_test_mode(TEST_mode_switch new_test_mode)
 
 void change_help_mode(HELP_mode_switch new_help_mode)
 {
-    if (help_state.counter == 0) {
-        help_state.mode = new_help_mode;
-        help_state.counter++;
+    static int help_change_counter = 0;
+
+    if (help_change_counter == 0) {
+        help_mode = new_help_mode;
+        help_change_counter++;
     } else
         printf(RED "Repeated access to the HELP_MODE variable is prohibited\n" DEFAULT);
 }
