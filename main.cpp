@@ -18,6 +18,11 @@ int main(int argc, char **argv)
 
     Equation eq = {};
 
+    if (get_help_mode() == HELP_ON) {
+        printf("%s", HELP_SENTENCE);
+        return 0;
+    }
+
     if (get_ui_mode() == UI_ON) {
         clear_screen();
         print_hello();

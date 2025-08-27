@@ -34,11 +34,14 @@ const char *r_count_to_str(Equation_roots_count r_count)
 void parse_args(int argc, char **argv)
 {
     for (int index = 0; index < argc; index++) {
-        if (0 == strcmp(argv[index], "-ui") && get_ui_mode() == UI_ON)
+        if (0 == strcmp(argv[index], "--ui") && get_ui_mode() == UI_ON)
             change_ui_mode(UI_OFF);
 
-        if (0 == strcmp(argv[index], "-test") && get_test_mode() == TEST_OFF)
+        if (0 == strcmp(argv[index], "--test") && get_test_mode() == TEST_OFF)
             change_test_mode(TEST_ON);
+
+        if (0 == strcmp(argv[index], "--help") && get_help_mode() == HELP_OFF)
+            change_help_mode(HELP_ON);
     }
 }
 
