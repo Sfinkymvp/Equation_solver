@@ -14,6 +14,12 @@
 bool is_equal(double number1, double number2);
 
 
+/// Проверяет корректность коэффициентов (Не NAN и не INFINITY)
+/// @param eq Указатель на структуру с уравнением 
+/// @return true - коэффициенты корректны; false - коэффициенты некорректны
+bool is_coefficients_correct(Equation *eq);
+
+
 /// Создает строковую константу с количеством корней уравнения
 /// @param r_count Количество корней уравнения
 /// @return Строковая константа количества корней уравнения
@@ -40,17 +46,15 @@ bool resize_tests(Tests * tests);
 
 
 /// Получает файл для чтения
-/// @param in Указатель на поток ввода
 /// @param file_name Имя файла для записи
-/// @return true - поток успешно открыт; false - поток не открыт 
-bool get_input_file(FILE **in, const char *file_name);
+/// @return При успешном открытии - поток, иначе NULL
+FILE *get_input_file(const char *file_name);
 
 
 /// Получает файл для записи
-/// @param out Указатель на поток вывода
 /// @param file_name Имя файла для записи
-/// @return true - поток успешно открыт; false - поток не открыт
-bool get_output_file(FILE **out, const char *file_name);
+/// @return При успешном открытии - поток, иначе NULL
+FILE *get_output_file(const char *file_name);
 
 
 /// Проверяет, содержит ли входной буффер только пробельные символы
@@ -60,7 +64,8 @@ bool is_buffer_whitespace_only(FILE *in);
 
 
 /// Очищает входной буффер
-void clear_input_buffer();
+/// @param in Входной поток
+void clear_input_buffer(FILE *in);
 
 
 /// Очищает терминал

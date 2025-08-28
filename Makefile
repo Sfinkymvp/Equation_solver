@@ -20,9 +20,10 @@ FLAGS = -D_DEBUG -ggdb3 -std=c++17 -O0 \
 OBJDIR = obj
 
 solve: $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o \
-    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o
+    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o $(OBJDIR)/myassert.o
 	@g++ $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o \
-    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o $(FLAGS) -o solve
+    $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o \
+    $(OBJDIR)/myassert.o $(FLAGS) -o solve
 
 $(OBJDIR)/main.o: main.cpp
 	@g++ -c main.cpp $(FLAGS) -o $(OBJDIR)/main.o
@@ -48,4 +49,5 @@ $(OBJDIR)/utils.o: utils.cpp
 $(OBJDIR)/arts.o: arts.cpp
 	@g++ -c arts.cpp $(FLAGS) -o $(OBJDIR)/arts.o
 
-
+$(OBJDIR)/myassert.o: myassert.cpp
+	@g++ -c myassert.cpp $(FLAGS) -o $(OBJDIR)/myassert.o

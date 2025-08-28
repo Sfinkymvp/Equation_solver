@@ -8,10 +8,13 @@
 #include "solver.h"
 #include "utils.h"
 #include "tests.h"
+#include "myassert.h"
 
 
 bool enter_answer(char *answer)
 {
+    MY_ASSERT(answer != NULL, ERR_NULL_PTR, "'answer' must not point to null");
+
     fgets(answer, MAX_BUFFER_LEN, stdin);
     
     size_t len = strlen(answer);
@@ -21,7 +24,7 @@ bool enter_answer(char *answer)
         return true;
     } else {
         answer[0] = '\0';
-        clear_input_buffer();
+        clear_input_buffer(stdin);
         return false;
     }
 }
@@ -29,6 +32,8 @@ bool enter_answer(char *answer)
 
 bool enter_file_name(char *file_name)
 {
+    MY_ASSERT(file_name != NULL, ERR_NULL_PTR, "'file_name' must not point to null");
+
     printf("Enter file name:\n");
     
     bool enter_status = enter_answer(file_name);
@@ -65,6 +70,8 @@ bool check_agreement()
 
 bool get_coefficients(Equation *eq, Input_mode input_mode)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+
     switch (input_mode) {
         case KEYBOARD_INPUT: enter_coefficients(eq);
                   return true;
@@ -80,69 +87,79 @@ bool get_coefficients(Equation *eq, Input_mode input_mode)
 
 Input_mode enter_input_mode()
 {
-    int input_mode = 0;
-
     printf("Select the coefficient input mode:\n"
            "1 - Keyboard input\n"
            "2 - Reading from file\n"
            "3 - Quit\n\n");
 
     while (true) {
-        input_mode = getchar();
+        char input_mode = 0;
+        int read_status = scanf(" %c", &input_mode);
 
-        if (input_mode == EOF)
+        if (read_status == EOF)
             return QUIT;
 
-        if (is_buffer_whitespace_only(stdin))
-            switch (input_mode) {
-                case '1': return KEYBOARD_INPUT;
-                case '2': return INPUT_FROM_FILE;
-                case '3': return QUIT;
-                default: printf(RED "Enter a valid character (1 / 2 / 3)\n" DEFAULT);
-                         clear_input_buffer();
-                         continue;
-            }
+        clear_input_buffer(stdin);
 
-        printf(RED "Enter one character (1 / 2 / 3)\n" DEFAULT);
-        clear_input_buffer();
+        switch (input_mode) {
+            case '1': return KEYBOARD_INPUT;
+            case '2': return INPUT_FROM_FILE;
+            case '3': return QUIT;
+            default: printf(RED "Enter a valid character (1 / 2 / 3)\n" DEFAULT);
+                     continue;
+        }
     }
 }
 
 
 void enter_coefficients(Equation *eq)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+
     printf("Enter coefficients\n");
 
     while (true) {
-        if (3 == scanf("%lf%lf%lf", &eq->a, &eq->b, &eq->c) && is_buffer_whitespace_only(stdin))
+        int read_count = scanf("%lf%lf%lf", &eq->a, &eq->b, &eq->c);
+
+        if (read_count == EOF)
             break;
 
-        if (getchar() == EOF)
-            break;
+        if (read_count == 3 && is_buffer_whitespace_only(stdin)) {
+            if (is_coefficients_correct(eq))
+                break;
+            else {
+                printf(RED "Without NaN and INF, Please)\n" DEFAULT);
+                continue;
+            }
+        }
 
         printf(RED "Try again\n" DEFAULT);
 
-        clear_input_buffer();
+        clear_input_buffer(stdin);
     }
 }
 
 
 bool load_coefficients_from_file(Equation *eq)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+
     char file_name[MAX_BUFFER_LEN] = {};
     
     if (!enter_file_name(file_name))
         return false;
 
-    FILE *in = NULL;
+    FILE *in = get_input_file(file_name);
 
-    if (!get_input_file(&in, file_name))
+    if (in == NULL)
         return false;
+ 
+    MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
 
     int scanf_status = fscanf(in, "%lf%lf%lf", &eq->a, &eq->b, &eq->c);
     bool buffer_status = is_buffer_whitespace_only(in);
 
-    if (scanf_status == 3 && buffer_status && fclose(in) != EOF) {
+    if (scanf_status == 3 && is_coefficients_correct(eq) && buffer_status && fclose(in) != EOF) {
         printf(GREEN "Import successful\n\n" DEFAULT);
         return true;
     } else {
@@ -152,8 +169,10 @@ bool load_coefficients_from_file(Equation *eq)
 }
 
 
-bool enter_tests(Tests * tests, FILE * in)
+bool enter_user_tests(Tests * tests, FILE * in)
 {
+    MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
+
     for (tests->len = 0; true; tests->len++) {
         if (tests->len >= tests->cap)
             if (!resize_tests(tests)) {
@@ -161,19 +180,26 @@ bool enter_tests(Tests * tests, FILE * in)
                 return false;
             } 
 
+        Test_equation *test = &tests->equations[tests->len];
+
+        MY_ASSERT(test != NULL, ERR_NULL_PTR, "'test' must point to structure");
+
         int roots_count = 0; 
         int read_count = fscanf(in, "%lf %lf %lf %d %lf %lf",
-        &tests->equations[tests->len].eq.a, &tests->equations[tests->len].eq.b, &tests->equations[tests->len].eq.c,
-        &roots_count, &tests->equations[tests->len].eq.roots[0],
-        &tests->equations[tests->len].eq.roots[1]);
+        &test->eq.a, &test->eq.b, &test->eq.c, &roots_count, &test->eq.roots[0], &test->eq.roots[1]);
 
-        if (!choose_roots_count(&tests->equations[tests->len].eq.r_count, roots_count)) {
+        if (!is_coefficients_correct(&test->eq)) {
+            printf(RED "incorrect coefficients\n" DEFAULT);
+            return false;
+        } 
+
+        if (!choose_roots_count(&test->eq.r_count, roots_count)) {
             printf(RED "incorrect number of roots in one of the equations from the file\n" DEFAULT);
             return false;
         }
 
         if (read_count == EOF) {
-            order_roots(&tests->equations[tests->len].eq);
+            order_roots(&test->eq);
             return true;
         }
 
@@ -187,7 +213,7 @@ bool enter_tests(Tests * tests, FILE * in)
                    "a b c roots_count x1 x2\n" DEFAULT);
             return false;
         }
-      }
+    }
 }
 
 
@@ -198,10 +224,12 @@ bool load_tests_from_file(Tests * tests)
     if (!enter_file_name(file_name))
         return false;
 
-    FILE *in = NULL;
+    FILE *in = get_input_file(file_name);
 
-    if (!get_input_file(&in, file_name))
+    if (in == NULL)
         return false;
 
-    return enter_tests(tests, in) && fclose(in) == 0;
+    MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
+
+    return enter_user_tests(tests, in) && fclose(in) == 0;
 }

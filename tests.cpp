@@ -6,10 +6,13 @@
 #include "constants.h"
 #include "utils.h"
 #include "solver.h"
+#include "myassert.h"
 
 
 void run_tests(Tests *tests)
 {
+    MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
+
     for (int index = 0; index < tests->len; index++)
         solve_test(&tests->equations[index]);
 }
@@ -17,6 +20,8 @@ void run_tests(Tests *tests)
 
 void solve_test(Test_equation *test)
 {
+    MY_ASSERT(test != NULL, ERR_NULL_PTR, "'test' should point to test");
+
     test->ref = test->eq;
 
     solve_equation(&test->ref);
@@ -32,6 +37,8 @@ void solve_test(Test_equation *test)
 
 void is_tests_correct(Tests *tests)
 {
+    MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
+
     for (int index = 0; index < tests->len; index++)
         if (tests->equations[index].status == TEST_ERR) {
             printf(RED "Not all tests passed.\n" DEFAULT

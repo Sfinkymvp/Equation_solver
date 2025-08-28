@@ -1,14 +1,14 @@
 #include <math.h>
-#include <assert.h>
 
 #include "solver.h"
 #include "constants.h"
 #include "utils.h"
+#include "myassert.h"
 
 
 void solve_equation(Equation *eq)
 {
-    assert(eq != NULL);
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
 
     if (is_equal(eq->a, 0))
         solve_linear(eq);
@@ -25,7 +25,7 @@ void solve_equation(Equation *eq)
 
 void order_roots(Equation *eq)
 {
-    assert(eq != NULL);
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
 
     if (eq->r_count == TWO_ROOTS && eq->roots[0] > eq->roots[1]) {
         double temp = eq->roots[0];
@@ -38,7 +38,7 @@ void order_roots(Equation *eq)
 
 void solve_linear(Equation *eq)
 {
-    assert(eq != NULL);
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
 
     if (is_equal(eq->b, 0) && is_equal(eq->c, 0))
         eq->r_count = INFINITE_ROOTS;
@@ -54,8 +54,8 @@ void solve_linear(Equation *eq)
 
 void solve_quadratic(Equation *eq) 
 {
-    assert(eq != NULL);
-    assert(!is_equal(eq->a, 0));
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(!is_equal(eq->a, 0), ERR_UNKNOWN, "in this function the coefficient 'a' cannot be equal to 0");
 
     double discriminant = eq->b * eq->b - 4.0 * eq->a * eq->c;
 

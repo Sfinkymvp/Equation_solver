@@ -1,0 +1,10 @@
+In the equation with coefficients
+a = 1.00000, b = -5.00000, c = 4.00000
+In a program solution: r_count = TWO_ROOTS, x1 = 1.000000, x2 = 4.000000
+In a user solution: r_count = TWO_ROOTS, x1 = 0.500000, x2 = 4.000000
+
+In the equation with coefficients
+a = 1.00000, b = -6.00000, c = 9.00000
+In a program solution: r_count = ONE_ROOT, x1 = 3.000000, x2 = 0.000000
+In a user solution: r_count = NO_ROOTS, x1 = 3.000000, x2 = 0.000000
+

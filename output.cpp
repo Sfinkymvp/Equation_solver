@@ -1,28 +1,30 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-#include <assert.h>
 
 #include "output.h"
 #include "input.h"
 #include "constants.h"
 #include "utils.h"
 #include "tests.h"
+#include "myassert.h"
 
 
 void print_into_file(const Equation *eq)
 {
-    assert(eq != NULL);
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
 
     char file_name[MAX_BUFFER_LEN] = {};
 
     if (!enter_file_name(file_name))
         return;
 
-    FILE *out = NULL;
+    FILE *out = get_output_file(file_name);
     
-    if (!get_output_file(&out, file_name)) 
+    if (out == NULL)
         return;
+
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
 
     print_equation(eq, out);
 
@@ -35,17 +37,20 @@ void print_into_file(const Equation *eq)
 
 void print_tests_into_file(const Tests * tests)
 {
-    assert(tests->equations != NULL);
+    MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
+    MY_ASSERT(tests->len > 0, ERR_OUT_OF_RANGE, "Number of tests: %d, it should be positive", tests->len);
 
     char file_name[MAX_BUFFER_LEN] = {};
 
     if (!enter_file_name(file_name))
         return;
 
-    FILE *out = NULL;
+    FILE *out = get_output_file(file_name);
     
-    if (!get_output_file(&out, file_name)) 
+    if (out == NULL)
         return;
+
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
 
     for (int index = 0; index < tests->len; index++)
         if (tests->equations[index].status == TEST_ERR)
@@ -60,7 +65,15 @@ void print_tests_into_file(const Tests * tests)
 
 void print_failed_test(const Test_equation * test, FILE *out)
 {
-    print_equation(&test->ref, out);
+    MY_ASSERT(test != NULL, ERR_NULL_PTR, "'test' should point to test");
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
+
+    fprintf(out, "In the equation with coefficients\n"
+                 "a = %.5lf, b = %.5lf, c = %.5lf\n",
+    test->ref.a, test->ref.b, test->ref.c);
+
+    fprintf(out, "In a program solution: r_count = %s, x1 = %lf, x2 = %lf\n",
+    r_count_to_str(test->ref.r_count), test->ref.roots[0], test->ref.roots[1]);
 
     fprintf(out, "In a user solution: r_count = %s, x1 = %lf, x2 = %lf\n\n",
     r_count_to_str(test->eq.r_count), test->eq.roots[0], test->eq.roots[1]);
@@ -69,7 +82,8 @@ void print_failed_test(const Test_equation * test, FILE *out)
 
 void print_equation(const Equation *eq, FILE *out)
 {   
-    assert(out != NULL);
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
 
     switch (eq->r_count) {
         case NO_ROOTS: print_no_roots(eq, out); break;

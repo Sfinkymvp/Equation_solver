@@ -51,7 +51,7 @@ bool load_coefficients_from_file(Equation *eq);
 /// @param tests Динамический массив для хранения уравнений (тестов)
 /// @param in Поток ввода
 /// @return true - тесты успешно считаны; false - тесты не считаны
-bool enter_tests(Tests * tests, FILE * in);
+bool enter_user_tests(Tests * tests, FILE * in);
 
 
 /// Загружает пользовательские тесты из файла

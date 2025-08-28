@@ -10,6 +10,7 @@
 #include "output.h"
 #include "tests.h"
 #include "arts.h"
+#include "myassert.h"
 
 
 int main(int argc, char **argv)
@@ -17,6 +18,9 @@ int main(int argc, char **argv)
     parse_args(argc, argv); 
 
     Equation eq = {};
+
+//  int a = 2, b = 3;
+//  MY_ASSERT(a == b, ERR_UNKNOWN, "Точно ли %d == %d?", a, b);
 
     if (get_help_mode() == HELP_ON) {
         printf("%s", HELP_MESSAGE);
