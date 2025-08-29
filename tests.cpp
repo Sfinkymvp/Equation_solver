@@ -43,7 +43,7 @@ void is_tests_correct(Tests *tests)
 
     for (int index = 0; index < tests->len; index++)
         if (tests->equations[index].status == TEST_ERR) {
-            printf(RED "Not all tests passed.\n" DEFAULT
+            printf(RED "Not all tests passed\n" DEFAULT
                        "Do you want to write the incorrect solutions to a file? (y/n)\n");
 
             if (check_agreement())
