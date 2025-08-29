@@ -14,10 +14,14 @@ FLAGS = -D_DEBUG -ggdb3 -std=c++17 -O0 \
   -Wno-narrowing -Wno-old-style-cast -Wno-varargs \
   -fcheck-new -fsized-deallocation -fstack-protector \
   -fstrict-overflow -flto-odr-type-merging -fno-omit-frame-pointer \
-  -Wlarger-than=8192 -Wstack-usage=8192 -pie -fPIE -Werror=vla \
+  -Wlarger-than=16384 -Wstack-usage=8192 -pie -fPIE -Werror=vla \
   -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
+
 OBJDIR = obj
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
 
 solve: $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o \
     $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o $(OBJDIR)/myassert.o
@@ -25,29 +29,29 @@ solve: $(OBJDIR)/main.o $(OBJDIR)/input.o $(OBJDIR)/output.o $(OBJDIR)/solver.o 
     $(OBJDIR)/parameters.o $(OBJDIR)/tests.o $(OBJDIR)/utils.o $(OBJDIR)/arts.o \
     $(OBJDIR)/myassert.o $(FLAGS) -o solve
 
-$(OBJDIR)/main.o: main.cpp
+$(OBJDIR)/main.o: main.cpp | $(OBJDIR)
 	@g++ -c main.cpp $(FLAGS) -o $(OBJDIR)/main.o
 
-$(OBJDIR)/input.o: input.cpp
+$(OBJDIR)/input.o: input.cpp | $(OBJDIR)
 	@g++ -c input.cpp $(FLAGS) -o $(OBJDIR)/input.o
 
-$(OBJDIR)/output.o: output.cpp
+$(OBJDIR)/output.o: output.cpp | $(OBJDIR)
 	@g++ -c output.cpp $(FLAGS) -o $(OBJDIR)/output.o
 
-$(OBJDIR)/solver.o: solver.cpp
+$(OBJDIR)/solver.o: solver.cpp | $(OBJDIR)
 	@g++ -c solver.cpp $(FLAGS) -o $(OBJDIR)/solver.o
 
-$(OBJDIR)/parameters.o: parameters.cpp
+$(OBJDIR)/parameters.o: parameters.cpp | $(OBJDIR)
 	@g++ -c parameters.cpp $(FLAGS) -o $(OBJDIR)/parameters.o
 
-$(OBJDIR)/tests.o: tests.cpp
+$(OBJDIR)/tests.o: tests.cpp | $(OBJDIR)
 	@g++ -c tests.cpp $(FLAGS) -o $(OBJDIR)/tests.o
 
-$(OBJDIR)/utils.o: utils.cpp
+$(OBJDIR)/utils.o: utils.cpp | $(OBJDIR)
 	@g++ -c utils.cpp $(FLAGS) -o $(OBJDIR)/utils.o
 
-$(OBJDIR)/arts.o: arts.cpp
+$(OBJDIR)/arts.o: arts.cpp | $(OBJDIR)
 	@g++ -c arts.cpp $(FLAGS) -o $(OBJDIR)/arts.o
 
-$(OBJDIR)/myassert.o: myassert.cpp
+$(OBJDIR)/myassert.o: myassert.cpp | $(OBJDIR)
 	@g++ -c myassert.cpp $(FLAGS) -o $(OBJDIR)/myassert.o
