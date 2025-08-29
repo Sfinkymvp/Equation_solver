@@ -38,7 +38,7 @@ bool enter_file_name(char *file_name)
     
     bool enter_status = enter_answer(file_name);
 
-    if (get_ui_mode() == UI_ON)    
+    if (get_mode(UI) == MODE_ON)    
         clear_screen();
 
     if (!enter_status) {

@@ -86,14 +86,14 @@ void parse_args(int argc, char **argv)
     MY_ASSERT(argv != NULL, ERR_NULL_PTR, "'argv' shoudn't point to NULL");
 
     for (int index = 0; index < argc; index++) {
-        if (0 == strcmp(argv[index], "--ui") && get_ui_mode() == UI_ON)
-            change_ui_mode(UI_OFF);
+        if (0 == strcmp(argv[index], "--ui") && get_mode(UI) == MODE_ON)
+            change_mode(UI, MODE_OFF);
 
-        if (0 == strcmp(argv[index], "--test") && get_test_mode() == TEST_OFF)
-            change_test_mode(TEST_ON);
+        if (0 == strcmp(argv[index], "--help") && get_mode(HELP) == MODE_OFF)
+            change_mode(HELP, MODE_ON);
 
-        if (0 == strcmp(argv[index], "--help") && get_help_mode() == HELP_OFF)
-            change_help_mode(HELP_ON);
+        if (0 == strcmp(argv[index], "--test") && get_mode(TEST) == MODE_OFF)
+            change_mode(TEST, MODE_ON);
     }
 }
 

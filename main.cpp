@@ -19,20 +19,17 @@ int main(int argc, char **argv)
 
     Equation eq = {};
 
-//  int a = 2, b = 3;
-//  MY_ASSERT(a == b, ERR_UNKNOWN, "Точно ли %d == %d?", a, b);
-
-    if (get_help_mode() == HELP_ON) {
+    if (get_mode(HELP) == MODE_ON) {
         printf("%s", HELP_MESSAGE);
         return 0;
     }
 
-    if (get_ui_mode() == UI_ON) {
+    if (get_mode(UI) == MODE_ON) {
         clear_screen();
         print_hello();
     }
 
-    if (get_test_mode() == TEST_OFF) {
+    if (get_mode(TEST) == MODE_OFF) {
         while (true) {
             Input_mode input_mode = enter_input_mode();
 
@@ -53,7 +50,7 @@ int main(int argc, char **argv)
                 continue;
             }
             
-            if (get_ui_mode() == UI_ON)
+            if (get_mode(UI) == MODE_ON)
                 clear_screen();
         }
     } else {
@@ -69,7 +66,7 @@ int main(int argc, char **argv)
             free(tests.equations);
     }
 
-    if (get_ui_mode() == UI_ON) {
+    if (get_mode(UI) == MODE_ON) {
         print_byebye(); 
     }
 

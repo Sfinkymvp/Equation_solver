@@ -2,6 +2,7 @@
 
 #include "parameters.h"
 #include "constants.h"
+#include "myassert.h"
 
 
 const char HELP_MESSAGE[] = "Usage:\n"
@@ -20,69 +21,28 @@ const char HELP_MESSAGE[] = "Usage:\n"
                              "\t\tIf two roots: '2'\n"
                              "\t\tIf infinite roots: '-1'\n\n"
                              "Options:\n"
+                             "\t--ui    Disable standard user interface\n"
                              "\t--help  Show this help message\n"
-                             "\t--test  Enable test mode\n"
-                             "\t--ui    Disable standard user interface\n";
+                             "\t--test  Enable test mode\n";
 
 
-static UI_mode_switch ui_mode = UI_ON;
+Mode_switch statuses[] = {MODE_ON,    
+                          MODE_OFF,
+                          MODE_OFF};
 
 
-static TEST_mode_switch test_mode = TEST_OFF;
-
-
-static HELP_mode_switch help_mode = HELP_OFF;
-
-
-UI_mode_switch get_ui_mode()
+Mode_switch get_mode(Options option)
 {
-    return ui_mode;
+    MY_ASSERT(UI <= option && option <= TEST, ERR_OUT_OF_RANGE, "Enum 'Options' value out of bounds");
+
+    return statuses[option];
 }
 
 
-TEST_mode_switch get_test_mode()
+void change_mode(Options option, Mode_switch new_mode)
 {
-    return test_mode;
-}
+    MY_ASSERT(UI <= option && option <= TEST, ERR_OUT_OF_RANGE, "Enum 'Options' value out of bounds");
+    MY_ASSERT(MODE_OFF <= new_mode && new_mode <= MODE_ON, ERR_OUT_OF_RANGE, "Enum 'Mode_switch value out of bounds");
 
-
-HELP_mode_switch get_help_mode()
-{
-    return help_mode;
-}
-
-
-void change_ui_mode(UI_mode_switch new_ui_mode)
-{
-    static int ui_change_counter = 0;
-
-    if (ui_change_counter == 0) {
-        ui_mode = new_ui_mode;
-        ui_change_counter++;
-    } else
-        printf(RED "Repeated access to the UI_MODE variable is prohibited\n" DEFAULT);
-}
-
-
-void change_test_mode(TEST_mode_switch new_test_mode)
-{
-    static int test_change_counter = 0;
-
-    if (test_change_counter == 0) {
-        test_mode = new_test_mode;
-        test_change_counter++;
-    } else
-        printf(RED "Repeated access to the TEST_MODE variable is prohibited\n" DEFAULT);
-}
-
-
-void change_help_mode(HELP_mode_switch new_help_mode)
-{
-    static int help_change_counter = 0;
-
-    if (help_change_counter == 0) {
-        help_mode = new_help_mode;
-        help_change_counter++;
-    } else
-        printf(RED "Repeated access to the HELP_MODE variable is prohibited\n" DEFAULT);
+    statuses[option] = new_mode;
 }
