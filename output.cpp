@@ -37,6 +37,7 @@ void print_into_file(const Equation *eq)
 
 void print_tests_into_file(const Tests * tests)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
     MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
     MY_ASSERT(tests->len > 0, ERR_OUT_OF_RANGE, "Number of tests: %d, it should be positive", tests->len);
 
@@ -97,6 +98,9 @@ void print_equation(const Equation *eq, FILE *out)
 
 void print_no_roots(const Equation *eq, FILE *out)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
+
     if (is_equal(eq->a, 0))
         fprintf(out, "%.2lf = 0 is not identical, no roots\n", eq->c);
     else
@@ -107,6 +111,9 @@ void print_no_roots(const Equation *eq, FILE *out)
 
 void print_one_root(const Equation *eq, FILE *out)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
+
     if (is_equal(eq->a, 0))
         fprintf(out, "%.2lfx%+.2lf = 0 has one root:\n"
                      "x = %.3lf\n", eq->b, eq->c, eq->roots[0]);
@@ -118,6 +125,9 @@ void print_one_root(const Equation *eq, FILE *out)
 
 void print_two_roots(const Equation *eq, FILE *out)
 {
+    MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
+
     fprintf(out, "%.2lfx^2%+.2lfx%+.2lf = 0 has two roots:\n"
                  "x = %.3lf, x = %.3lf\n", eq->a, eq->b, eq->c, eq->roots[0], eq->roots[1]);
 }
@@ -125,5 +135,7 @@ void print_two_roots(const Equation *eq, FILE *out)
 
 void print_infinite_roots(FILE *out)
 {
+    MY_ASSERT(out != NULL, ERR_NULL_PTR, "The output stream 'out' must exist");
+
     fprintf(out, "0 = 0 is an identity, infinite roots\n");
 }

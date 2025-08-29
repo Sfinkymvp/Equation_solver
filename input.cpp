@@ -119,7 +119,7 @@ void enter_coefficients(Equation *eq)
     printf("Enter coefficients\n");
 
     while (true) {
-        int read_count = scanf("%lf%lf%lf", &eq->a, &eq->b, &eq->c);
+        int read_count = scanf("%lf %lf %lf", &eq->a, &eq->b, &eq->c);
 
         if (read_count == EOF)
             break;
@@ -171,6 +171,7 @@ bool load_coefficients_from_file(Equation *eq)
 
 bool enter_user_tests(Tests * tests, FILE * in)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
     MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
 
     for (tests->len = 0; true; tests->len++) {
@@ -188,37 +189,20 @@ bool enter_user_tests(Tests * tests, FILE * in)
         int read_count = fscanf(in, "%lf %lf %lf %d %lf %lf",
         &test->eq.a, &test->eq.b, &test->eq.c, &roots_count, &test->eq.roots[0], &test->eq.roots[1]);
 
-        if (!is_coefficients_correct(&test->eq)) {
-            printf(RED "incorrect coefficients\n" DEFAULT);
-            return false;
-        } 
-
-        if (!choose_roots_count(&test->eq.r_count, roots_count)) {
-            printf(RED "incorrect number of roots in one of the equations from the file\n" DEFAULT);
-            return false;
-        }
-
         if (read_count == EOF) {
             order_roots(&test->eq);
             return true;
         }
 
-        int ch = 0;
-
-        while ((ch = getc(in)) == ' ' || ch == '\t')
-            ;
-
-        if ((ch != '\n' && ch != EOF) || read_count != 6) {
-            printf(RED "The file contains lines that do not match the format:\n"
-                   "a b c roots_count x1 x2\n" DEFAULT);
+        if (!is_test_correct(test, roots_count, read_count, in))
             return false;
-        }
     }
 }
 
 
 bool load_tests_from_file(Tests * tests)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
     char file_name[MAX_BUFFER_LEN] = {};
 
     if (!enter_file_name(file_name))

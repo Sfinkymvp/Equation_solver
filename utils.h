@@ -20,6 +20,15 @@ bool is_equal(double number1, double number2);
 bool is_coefficients_correct(Equation *eq);
 
 
+/// Проверяет пользовательский тест на корректность
+/// @param test Указатель на структуру с тестом
+/// @param roots_count Указанное пользователем количество корней
+/// @param read_count Количество считанных из потока чисел
+/// @param in Поток ввода
+/// @return true - тест корректен, данные записаны; false - тест некорректен
+bool is_test_correct(Test_equation *test, int roots_count, int read_count, FILE *in);
+
+
 /// Создает строковую константу с количеством корней уравнения
 /// @param r_count Количество корней уравнения
 /// @return Строковая константа количества корней уравнения

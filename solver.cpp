@@ -39,6 +39,7 @@ void order_roots(Equation *eq)
 void solve_linear(Equation *eq)
 {
     MY_ASSERT(eq != NULL, ERR_NULL_PTR, "'eq' must point to a structure");
+    MY_ASSERT(is_equal(eq->a, 0), ERR_UNKNOWN, "in this function the coefficient 'a' must be equal to 0");
 
     if (is_equal(eq->b, 0) && is_equal(eq->c, 0))
         eq->r_count = INFINITE_ROOTS;

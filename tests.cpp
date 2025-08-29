@@ -11,6 +11,7 @@
 
 void run_tests(Tests *tests)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
     MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
 
     for (int index = 0; index < tests->len; index++)
@@ -37,6 +38,7 @@ void solve_test(Test_equation *test)
 
 void is_tests_correct(Tests *tests)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
     MY_ASSERT(tests->equations != NULL, ERR_NULL_PTR, "Dynamic array with tests must exist"); 
 
     for (int index = 0; index < tests->len; index++)

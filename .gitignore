@@ -2,11 +2,11 @@
 *.o
 obj/
 test_successful
-test_error_read
+test_error
 test_input
 test_output
 html
 latex
 solve
-tests_failed
+tests_error
 tests_successful

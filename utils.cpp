@@ -25,6 +25,36 @@ bool is_coefficients_correct(Equation *eq)
 }
 
 
+bool is_test_correct(Test_equation *test, int roots_count, int read_count, FILE *in)
+{
+    MY_ASSERT(test != NULL, ERR_NULL_PTR, "'test' should point to test");
+    MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
+
+    if (!is_coefficients_correct(&test->eq)) {
+        printf(RED "incorrect coefficients\n" DEFAULT);
+        return false;
+    } 
+
+    if (!choose_roots_count(&test->eq.r_count, roots_count)) {
+        printf(RED "incorrect number of roots in one of the equations from the file\n" DEFAULT);
+        return false;
+    }
+
+    int ch = 0;
+
+    while ((ch = getc(in)) == ' ' || ch == '\t')
+        ;
+
+    if ((ch != '\n' && ch != EOF) || read_count != 6) {
+        printf(RED "The file contains lines that do not match the format:\n"
+               "a b c roots_count x1 x2\n" DEFAULT);
+        return false;
+    }
+
+    return true;
+}
+
+
 const char *r_count_to_str(Equation_roots_count r_count)
 {
     switch (r_count) {
@@ -70,6 +100,8 @@ void parse_args(int argc, char **argv)
 
 bool resize_tests(Tests *tests)
 {
+    MY_ASSERT(tests != NULL, ERR_NULL_PTR, "'tests' must point to structure");
+
     Test_equation *temp = NULL;
 
     if (tests->cap == 0) {
@@ -98,6 +130,8 @@ bool resize_tests(Tests *tests)
 
 FILE *get_input_file(const char *file_name)
 {
+    MY_ASSERT(file_name != NULL, ERR_NULL_PTR, "'file_name' must exist");
+
     FILE *in = fopen(file_name, "r"); 
 
     if (in == NULL) {
@@ -111,6 +145,8 @@ FILE *get_input_file(const char *file_name)
  
 FILE *get_output_file(const char *file_name)
 {
+    MY_ASSERT(file_name != NULL, ERR_NULL_PTR, "'file_name' must exist");
+    
     FILE *test = fopen(file_name, "r");
 
     if (test != NULL) {
@@ -157,6 +193,8 @@ bool is_buffer_whitespace_only(FILE *in)
 
 void clear_input_buffer(FILE *in)
 {
+    MY_ASSERT(in != NULL, ERR_NULL_PTR, "The output stream 'in' must exist");
+
     int c = 0;
     
     while ((c = getc(in)) != '\n' && c != EOF)
